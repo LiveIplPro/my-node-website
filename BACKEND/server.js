@@ -22,9 +22,11 @@ const apiLimiter = rateLimit({
 app.use("/api/", apiLimiter);
 
 // === Serve Static Files ===
-app.use(express.static(path.join(__dirname, 'PUBLIC')));
+app.use(express.static(path.join(__dirname, '..', 'PUBLIC')));
+
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'PUBLIC', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'PUBLIC', 'index.html'));
+
 });
 
 // === Cache (TTL 5 mins) ===
@@ -157,4 +159,3 @@ app.post("/api/predict", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-
