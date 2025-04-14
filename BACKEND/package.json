@@ -1,8 +1,4 @@
 {
-"engines": {
-  "node": "18.x"
-}
-
   "name": "ipl-backend-ready",
   "version": "1.0.0",
   "main": "server.js",
