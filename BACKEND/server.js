@@ -6,7 +6,6 @@ const NodeCache = require("node-cache");
 const rateLimit = require("express-rate-limit");
 
 const app = express();
-const PORT = 3001;
 const path = require('path');
 const PORT = process.env.PORT || 3000;
 
