@@ -9,153 +9,141 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// === Middleware ===
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// === Rate Limiting ===
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-  message: "Too many requests, please try again later.",
-});
-app.use("/api/", apiLimiter);
-
-// === Serve Static Files ===
+// Static files served from PUBLIC folder (adjusted for Render deployment)
 app.use(express.static(path.join(__dirname, '..', 'PUBLIC')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'PUBLIC', 'index.html'));
-
-});
-
-// === Cache (TTL 5 mins) ===
+// Cache setup (5 mins TTL)
 const matchCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 
-// === API Key Setup ===
-const apiKeys = process.env.API_KEYS?.split(",").map(key => key.trim()).filter(Boolean) || [];
+// Rate limiting middleware
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests, please try again later."
+});
+
+// API key rotation setup
+const apiKeys = process.env.API_KEYS?.split(",") || [];
+let currentKeyIndex = 0;
+let keyStatus = apiKeys.map(key => ({ key, available: true, lastUsed: null }));
+
 if (apiKeys.length === 0) {
-  console.error("❌ No API keys found. Please add API_KEYS in your .env file.");
+  console.error("❌ No API keys found. Please check your .env file.");
   process.exit(1);
 }
 
-let currentKeyIndex = 0;
-let keyStatus = apiKeys.map(key => ({
-  key,
-  available: true,
-  lastUsed: null
-}));
+console.log("✅ Loaded API keys:", apiKeys.map(k => "****" + k.slice(-4)).join(", "));
 
-console.log("✅ Loaded API Keys:", apiKeys.map(k => `****${k.slice(-4)}`).join(", "));
-
-// === API Key Rotation Function ===
-async function fetchWithRotation(urlGenerator, cacheTag) {
+// Rotating fetch function with cache
+async function fetchWithRotation(urlGenerator, endpoint) {
   let attempts = 0;
   const maxAttempts = apiKeys.length * 2;
 
   while (attempts < maxAttempts) {
-    const { key: apiKey, available, lastUsed } = keyStatus[currentKeyIndex];
+    const currentKey = keyStatus[currentKeyIndex];
+    const apiKey = currentKey.key;
     const url = urlGenerator(apiKey);
-    const cacheKey = `${cacheTag}_${apiKey}`;
-    const cached = matchCache.get(cacheKey);
+    const cacheKey = `${endpoint}_${apiKey}`;
+    const cachedData = matchCache.get(cacheKey);
 
-    if (cached) return cached;
+    if (cachedData) return cachedData;
 
     try {
-      console.log(`🔑 Trying API key: ****${apiKey.slice(-4)}`);
+      console.log(`🔑 Using API key ending with: ${apiKey.slice(-4)}`);
       const response = await fetch(url);
       const data = await response.json();
 
-      if (!response.ok || data.status === "error") {
+      if (!response.ok || (data && data.status === "error")) {
         if (data.message?.toLowerCase().includes("limit")) {
+          console.warn(`⚠️ API key limit exceeded: ${apiKey.slice(-4)}`);
           keyStatus[currentKeyIndex].available = false;
-          keyStatus[currentKeyIndex].lastUsed = new Date();
-          throw new Error(`Limit exceeded for key ****${apiKey.slice(-4)}`);
         }
-        throw new Error(data.message || "API Error");
+        throw new Error(data.message || "API request failed");
       }
 
       matchCache.set(cacheKey, data);
       keyStatus[currentKeyIndex].lastUsed = new Date();
       return data;
     } catch (err) {
-      console.warn(`⚠️ Key ****${apiKey.slice(-4)} failed: ${err.message}`);
+      console.error(`❌ Attempt ${attempts + 1} failed: ${err.message}`);
       currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
       attempts++;
 
-      // Retry stale keys after 1 hour
       if (attempts % apiKeys.length === 0) {
-        const now = new Date();
-        keyStatus.forEach(status => {
-          if (!status.available && now - new Date(status.lastUsed) > 3600000) {
-            status.available = true;
+        keyStatus.forEach(k => {
+          if (!k.available && k.lastUsed && (new Date() - k.lastUsed) > 3600000) {
+            k.available = true;
           }
         });
       }
 
-      await new Promise(res => setTimeout(res, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
   }
 
   throw new Error("All API keys failed or exhausted.");
 }
 
-// === API Endpoints ===
-
-// Get current matches
-app.get("/api/currentMatches", async (req, res) => {
+// API endpoints
+app.get("/api/currentMatches", apiLimiter, async (req, res) => {
   try {
     const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/currentMatches?apikey=${key}&offset=0`,
+      key => `https://api.cricapi.com/v1/currentMatches?apikey=${key}&offset=0`,
       "currentMatches"
     );
     res.json(data);
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
   }
 });
 
-// Get match stats by ID
-app.get("/api/matchStats/:matchId", async (req, res) => {
+app.get("/api/matchStats/:matchId", apiLimiter, async (req, res) => {
   try {
     const { matchId } = req.params;
     const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/match_info?apikey=${key}&id=${matchId}`,
+      key => `https://api.cricapi.com/v1/match_info?apikey=${key}&id=${matchId}`,
       `matchStats_${matchId}`
     );
     res.json(data);
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
   }
 });
 
-// Get player stats by ID
-app.get("/api/playerStats/:playerId", async (req, res) => {
+app.get("/api/playerStats/:playerId", apiLimiter, async (req, res) => {
   try {
     const { playerId } = req.params;
     const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/players_info?apikey=${key}&id=${playerId}`,
+      key => `https://api.cricapi.com/v1/players_info?apikey=${key}&id=${playerId}`,
       `playerStats_${playerId}`
     );
     res.json(data);
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
   }
 });
 
-// Predict winner (random for demo)
-app.post("/api/predict", async (req, res) => {
+// Prediction Endpoint
+app.post("/api/predict", apiLimiter, (req, res) => {
   try {
     const { team1, team2 } = req.body;
     const prediction = Math.random() > 0.5 ? team1 : team2;
-    const confidence = Math.random().toFixed(2);
-    res.json({ prediction, confidence });
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+    res.json({ prediction, confidence: Math.random().toFixed(2) });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
   }
 });
 
-// === Start Server ===
+// Wildcard route for SPA support
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'PUBLIC', 'index.html'));
+});
+
+// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server started on http://localhost:${PORT}`);
 });
