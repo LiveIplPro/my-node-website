@@ -139,12 +139,13 @@ app.post("/api/predict", apiLimiter, async (req, res) => {
   }
 });
 
-// Static Files
-app.use(express.static(path.join(__dirname, '..', 'PUBLIC')));
+// ✅ Static Files from FRONTEND folder
+const publicPath = path.join(__dirname, '..', 'FRONTEND');
+app.use(express.static(publicPath));
 
-// Catch-all route
+// ✅ Catch-all route for SPA
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'PUBLIC', 'index.html'));
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 // Start Server
