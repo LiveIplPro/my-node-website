@@ -9,21 +9,21 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// === Middleware ===
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// === Rate Limiting ===
+// Rate Limiting
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 100,
-  message: "Too many requests, please try again later.",
+  message: "Too many requests, please try again later."
 });
 
-// === Cache (TTL 5 mins) ===
+// Cache
 const matchCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 
-// === API Key Setup ===
+// API Key Setup
 const apiKeys = process.env.API_KEYS?.split(",").map(key => key.trim()).filter(Boolean) || [];
 if (apiKeys.length === 0) {
   console.error("❌ No API keys found. Please add API_KEYS in your .env file.");
@@ -39,13 +39,13 @@ let keyStatus = apiKeys.map(key => ({
 
 console.log("✅ Loaded API Keys:", apiKeys.map(k => `****${k.slice(-4)}`).join(", "));
 
-// === API Key Rotation Function ===
+// API Key Rotation
 async function fetchWithRotation(urlGenerator, cacheTag) {
   let attempts = 0;
   const maxAttempts = apiKeys.length * 2;
 
   while (attempts < maxAttempts) {
-    const { key: apiKey, available, lastUsed } = keyStatus[currentKeyIndex];
+    const { key: apiKey } = keyStatus[currentKeyIndex];
     const url = urlGenerator(apiKey);
     const cacheKey = `${cacheTag}_${apiKey}`;
     const cached = matchCache.get(cacheKey);
@@ -74,7 +74,6 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
       currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
       attempts++;
 
-      // Retry stale keys after 1 hour
       if (attempts % apiKeys.length === 0) {
         const now = new Date();
         keyStatus.forEach(status => {
@@ -87,13 +86,10 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
       await new Promise(res => setTimeout(res, 500));
     }
   }
-
   throw new Error("All API keys failed or exhausted.");
 }
 
-// === API Endpoints ===
-
-// Get current matches
+// API Endpoints
 app.get("/api/currentMatches", apiLimiter, async (req, res) => {
   try {
     const data = await fetchWithRotation(
@@ -106,7 +102,6 @@ app.get("/api/currentMatches", apiLimiter, async (req, res) => {
   }
 });
 
-// Get match stats by ID
 app.get("/api/matchStats/:matchId", apiLimiter, async (req, res) => {
   try {
     const { matchId } = req.params;
@@ -120,7 +115,6 @@ app.get("/api/matchStats/:matchId", apiLimiter, async (req, res) => {
   }
 });
 
-// Get player stats by ID
 app.get("/api/playerStats/:playerId", apiLimiter, async (req, res) => {
   try {
     const { playerId } = req.params;
@@ -134,7 +128,6 @@ app.get("/api/playerStats/:playerId", apiLimiter, async (req, res) => {
   }
 });
 
-// Predict winner (random for demo)
 app.post("/api/predict", apiLimiter, async (req, res) => {
   try {
     const { team1, team2 } = req.body;
@@ -146,15 +139,15 @@ app.post("/api/predict", apiLimiter, async (req, res) => {
   }
 });
 
-// === Serve Static Files ===
+// Static Files
 app.use(express.static(path.join(__dirname, '..', 'PUBLIC')));
 
-// Catch-all route should be LAST
+// Catch-all route
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'PUBLIC', 'index.html'));
 });
 
-// === Start Server ===
+// Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
