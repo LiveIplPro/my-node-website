@@ -4,14 +4,17 @@ const cors = require("cors");
 const fetch = require("node-fetch");
 const NodeCache = require("node-cache");
 const rateLimit = require("express-rate-limit");
+const morgan = require("morgan");
 const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const RETRY_DELAY = parseInt(process.env.RETRY_DELAY_MS) || 500;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(morgan("dev"));
 
 // Rate Limiting
 const apiLimiter = rateLimit({
@@ -23,7 +26,7 @@ const apiLimiter = rateLimit({
 // Cache
 const matchCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 
-// API Key Setup
+// Load API Keys
 const apiKeys = process.env.API_KEYS?.split(",").map(key => key.trim()).filter(Boolean) || [];
 if (apiKeys.length === 0) {
   console.error("❌ No API keys found. Please add API_KEYS in your .env file.");
@@ -39,7 +42,7 @@ let keyStatus = apiKeys.map(key => ({
 
 console.log("✅ Loaded API Keys:", apiKeys.map(k => `****${k.slice(-4)}`).join(", "));
 
-// API Key Rotation
+// API Key Rotation with Cache
 async function fetchWithRotation(urlGenerator, cacheTag) {
   let attempts = 0;
   const maxAttempts = apiKeys.length * 2;
@@ -83,9 +86,10 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
         });
       }
 
-      await new Promise(res => setTimeout(res, 500));
+      await new Promise(res => setTimeout(res, RETRY_DELAY));
     }
   }
+
   throw new Error("All API keys failed or exhausted.");
 }
 
@@ -142,7 +146,14 @@ app.post("/api/predict", apiLimiter, async (req, res) => {
 });
 
 // ========================
-// 🧩 UI Static File Routes
+// 🩺 Health Check
+// ========================
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// ========================
+// 🧩 Static UI Routes
 // ========================
 const publicRoot = path.join(__dirname, '..', 'PUBLIC');
 app.use(express.static(publicRoot));
@@ -157,6 +168,11 @@ app.get('/live', (req, res) => {
 
 app.get('/schedule', (req, res) => {
   res.sendFile(path.join(publicRoot, 'schedule', 'index.html'));
+});
+
+// (Optional) Frontend SPA fallback route
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicRoot, 'index.html'));
 });
 
 // ========================
