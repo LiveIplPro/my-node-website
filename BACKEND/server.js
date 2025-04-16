@@ -89,7 +89,9 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
   throw new Error("All API keys failed or exhausted.");
 }
 
-// API Endpoints
+// ========================
+// 🎯 API Routes
+// ========================
 app.get("/api/currentMatches", apiLimiter, async (req, res) => {
   try {
     const data = await fetchWithRotation(
@@ -139,16 +141,27 @@ app.post("/api/predict", apiLimiter, async (req, res) => {
   }
 });
 
-// ✅ Static Files from FRONTEND folder
-const publicPath = path.join(__dirname, '..', 'FRONTEND');
-app.use(express.static(publicPath));
+// ========================
+// 🧩 UI Static File Routes
+// ========================
+const publicRoot = path.join(__dirname, '..', 'PUBLIC');
+app.use(express.static(publicRoot));
 
-// ✅ Catch-all route for SPA
-app.get('*', (req, res) => {
-  res.sendFile(path.join(publicPath, 'index.html'));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(publicRoot, 'index.html'));
 });
 
-// Start Server
+app.get('/live', (req, res) => {
+  res.sendFile(path.join(publicRoot, 'live', 'index.html'));
+});
+
+app.get('/schedule', (req, res) => {
+  res.sendFile(path.join(publicRoot, 'schedule', 'index.html'));
+});
+
+// ========================
+// ✅ Start Server
+// ========================
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
