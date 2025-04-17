@@ -1,21 +1,44 @@
 {
   "name": "cricket-api-server",
-  "version": "1.0.0",
-  "description": "Cricket API Server for Live IPL",
+  "version": "1.0.1",
+  "description": "Cricket API Server for Live IPL with Render deployment support",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "predeploy": "npm install",
+    "check-env": "node -e \"require('dotenv').config(); console.log('API Keys:', process.env.API_KEYS?.split(',').map(k => '****'+k.slice(-4)))\""
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^16.0.0",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "express-rate-limit": "^6.7.0",
+    "express-rate-limit": "^6.8.1",
     "node-cache": "^5.1.2",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   },
   "engines": {
-    "node": "18.x"
-  }
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "cricket",
+    "ipl",
+    "api",
+    "render",
+    "nodejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LiveIplPro/my-node-website.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LiveIplPro/my-node-website/issues"
+  },
+  "homepage": "https://github.com/LiveIplPro/my-node-website#readme",
+  "license": "MIT"
 }
