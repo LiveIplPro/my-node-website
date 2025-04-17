@@ -1,5 +1,5 @@
 // LIVE DATA FETCH
-    fetch("/api/currentMatches")
+ fetch("https://my-node-website.onrender.com/api/currentMatches") 
   .then(response => response.json())
   .then(data => {
     console.log("Live Matches:", data);
