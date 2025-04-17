@@ -153,16 +153,26 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Serve static files
-const publicRoot = path.join(__dirname, 'public');
+// Serve static files - UPDATED PATH TO MATCH YOUR STRUCTURE
+const publicRoot = path.join(__dirname, 'PUBLIC'); // Changed from 'public' to 'PUBLIC'
+console.log(`Serving static files from: ${publicRoot}`); // Debug log
+
 app.use(express.static(publicRoot));
 
-// SPA routes
+// SPA routes - UPDATED TO MATCH YOUR STRUCTURE
 app.get(['/', '/live', '/schedule', '/predictions'], (req, res) => {
-  res.sendFile(path.join(publicRoot, 'index.html'));
+  const filePath = path.join(publicRoot, 'index.html');
+  console.log(`Attempting to send file: ${filePath}`); // Debug log
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('Error sending file:', err);
+      res.status(500).send('Error loading page');
+    }
+  });
 });
 
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Static files being served from: ${publicRoot}`);
 });
