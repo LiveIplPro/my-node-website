@@ -1,38 +1,58 @@
 // LIVE DATA FETCH
-fetch("https://my-node-website.onrender.com/api/currentMatches") 
-  .then(response => response.json())
-  .then(data => {
-    console.log("Live Matches:", data);
-    // Optional: UI में दिखाना
-    const scheduleDiv = document.getElementById("liveSchedule");
-    if (data && data.data) {
-      scheduleDiv.innerHTML = data.data
-        .map(match => {
-          return `
-            <div class="match-card">
-              <h3>${match.name}</h3>
-              <p><strong>Status:</strong> ${match.status}</p>
-              <p><strong>Venue:</strong> ${match.venue}</p>
-              <p><strong>Teams:</strong> ${match.teams.join(" vs ")}</p>
-              <p><strong>Date:</strong> ${match.date}</p>
-            </div>
-          `;
-        })
-        .join("");
-    } else {
-      scheduleDiv.innerHTML = "⚠️ No match data found.";
-    }
-  })
-  .catch(error => {
-    console.error("❌ Error fetching data:", error);
-  });
+function fetchLiveMatches() {
+  fetch("https://my-node-website.onrender.com/api/currentMatches")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("Live Matches:", data);
+      updateLiveMatchesUI(data);
+    })
+    .catch(error => {
+      console.error("❌ Error fetching live matches:", error);
+      // Fallback to static data if API fails
+      updateLiveMatchesUI({
+        data: matches.filter(match => match.status === 'live' || match.status === 'completed')
+      });
+    });
+}
 
-fetch("https://my-node-website.onrender.com/api/currentMatches") 
-  .then(res => res.json())
-  .then(data => {
-    console.log(data); // अब आप इसे DOM में दिखा सकते हो
-  })
-  .catch(err => console.error("Error fetching match data", err));
+function updateLiveMatchesUI(data) {
+  const scheduleDiv = document.getElementById("liveSchedule");
+  if (!scheduleDiv) return;
+
+  if (data && data.data && data.data.length > 0) {
+    scheduleDiv.innerHTML = data.data
+      .map(match => {
+        const team1 = teams.find(t => t.shortName === match.team1) || { name: match.team1, shortName: match.team1 };
+        const team2 = teams.find(t => t.shortName === match.team2) || { name: match.team2, shortName: match.team2 };
+        
+        return `
+          <div class="match-card ${match.status === 'live' ? 'live' : ''}">
+            <h3>${team1.shortName} vs ${team2.shortName}</h3>
+            <p><strong>Status:</strong> ${match.status}</p>
+            ${match.team1Score ? `<p><strong>${team1.shortName}:</strong> ${match.team1Score}</p>` : ''}
+            ${match.team2Score ? `<p><strong>${team2.shortName}:</strong> ${match.team2Score}</p>` : ''}
+            ${match.result ? `<p><strong>Result:</strong> ${match.result}</p>` : ''}
+            <p><strong>Venue:</strong> ${match.venue}</p>
+            <p><strong>Date:</strong> ${new Date(match.date).toDateString()}, ${match.time}</p>
+          </div>
+        `;
+      })
+      .join("");
+  } else {
+    scheduleDiv.innerHTML = `
+      <div class="no-matches">
+        <i class="fas fa-info-circle"></i>
+        <p>No live matches currently</p>
+        <p>Check back later for updates</p>
+      </div>
+    `;
+  }
+}
 
 // DOM Elements
 const mobileMenuBtn = document.querySelector('.mobile-menu');
@@ -141,8 +161,7 @@ function updateCountdown() {
     // Find the next upcoming match
     const now = new Date();
     const upcomingMatches = matches.filter(match => {
-        const matchDateTime = `${match.date}T${match.time}`;
-        const matchDate = new Date(matchDateTime.replace(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/, '$1T$2:00'));
+        const matchDate = new Date(`${match.date}T${match.time}:00`);
         return matchDate > now && match.status === 'upcoming';
     });
     
@@ -166,8 +185,7 @@ function updateCountdown() {
     });
     
     const nextMatch = upcomingMatches[0];
-    const nextMatchDateTime = `${nextMatch.date}T${nextMatch.time}`;
-    const nextMatchDate = new Date(nextMatchDateTime.replace(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/, '$1T$2:00'));
+    const nextMatchDate = new Date(`${nextMatch.date}T${nextMatch.time}:00`);
     const distance = nextMatchDate - now;
     
     // Update countdown display
@@ -198,14 +216,14 @@ function renderHighlightMatch() {
     const todayStr = today.toISOString().split('T')[0];
     
     const todaysMatches = matches.filter(match => {
-        return match.date === todayStr;
+        const matchDate = match.date;
+        return matchDate === todayStr;
     });
     
     if (todaysMatches.length === 0) {
         // If no matches today, find the next upcoming match
         const upcomingMatches = matches.filter(match => {
-            const matchDateTime = `${match.date}T${match.time}`;
-            const matchDate = new Date(matchDateTime.replace(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/, '$1T$2:00'));
+            const matchDate = new Date(`${match.date}T${match.time}:00`);
             return matchDate > today && match.status === 'upcoming';
         });
         
@@ -218,7 +236,7 @@ function renderHighlightMatch() {
             
             renderHighlightContent(upcomingMatches[0]);
         } else {
-            highlightMatchContainer.innerHTML = '<p>No upcoming matches scheduled</p>';
+            highlightMatchContainer.innerHTML = '<div class="no-highlight-match"><i class="fas fa-calendar-times"></i><p>No upcoming matches scheduled</p></div>';
         }
         return;
     }
@@ -231,8 +249,7 @@ function renderHighlightContent(match) {
     const team1 = teams.find(t => t.shortName === match.team1);
     const team2 = teams.find(t => t.shortName === match.team2);
     
-    const matchDateTime = `${match.date}T${match.time}`;
-    const matchDate = new Date(matchDateTime.replace(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/, '$1T$2:00'));
+    const matchDate = new Date(`${match.date}T${match.time}:00`);
     const now = new Date();
     const timeUntilMatch = matchDate - now;
     
@@ -307,6 +324,7 @@ function startHighlightCountdown(matchDate) {
         
         if (distance <= 0) {
             // Match has started, reload the highlight
+            clearInterval(highlightCountdownInterval);
             renderHighlightMatch();
             return;
         }
@@ -374,8 +392,7 @@ function openMatchModal(match) {
     
     const team1 = teams.find(t => t.shortName === match.team1);
     const team2 = teams.find(t => t.shortName === match.team2);
-    const matchDateTime = `${match.date}T${match.time}`;
-    const matchDate = new Date(matchDateTime.replace(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/, '$1T$2:00'));
+    const matchDate = new Date(`${match.date}T${match.time}:00`);
     const now = new Date();
     const timeUntilMatch = matchDate - now;
     
@@ -413,6 +430,11 @@ function openMatchModal(match) {
             ${match.status === 'live' ? `<p class="modal-result"><strong>Status:</strong> ${match.result}</p>` : ''}
         </div>
         ${timerHTML}
+        <div class="modal-actions">
+            <button class="btn btn-primary stream-btn" onclick="alert('Streaming service would launch here')">
+                <i class="fas fa-tv"></i> Watch Live Stream
+            </button>
+        </div>
     `;
     
     modal.classList.add('active');
@@ -431,6 +453,7 @@ function openMatchModal(match) {
             
             if (distance <= 0) {
                 // Match has started, reload the modal
+                clearInterval(modalCountdownInterval);
                 openMatchModal(match);
                 return;
             }
@@ -453,16 +476,6 @@ function openMatchModal(match) {
         
         updateModalTimer();
         modalCountdownInterval = setInterval(updateModalTimer, 1000);
-    }
-    
-    // Add animation
-    if (typeof gsap !== 'undefined') {
-        gsap.from('.modal-content', {
-            duration: 0.3,
-            scale: 0.9,
-            opacity: 0,
-            ease: 'back.out(1.7)'
-        });
     }
 }
 
@@ -518,16 +531,6 @@ function openTeamModal(team) {
     
     teamModal.classList.add('active');
     document.body.classList.add('no-scroll');
-    
-    // Add animation
-    if (typeof gsap !== 'undefined') {
-        gsap.from('.modal-content', {
-            duration: 0.3,
-            scale: 0.9,
-            opacity: 0,
-            ease: 'back.out(1.7)'
-        });
-    }
 }
 
 function closeModal() {
@@ -588,7 +591,7 @@ function renderTeams() {
 function renderStats(statType) {
     if (!statsContainer) return;
     
-    let stats = [];
+   let stats = [];
     let headers = [];
     
     switch(statType) {
