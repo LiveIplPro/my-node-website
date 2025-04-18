@@ -159,6 +159,12 @@ function updateCountdown() {
         if (nextMatchVenue) nextMatchVenue.textContent = '';
         return;
     }
+  // Simple example for subscription form
+  document.getElementById('subscribe-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert("Thank you for subscribing!");
+    this.reset();
+  });
     
     // Sort by date to get the next match
     upcomingMatches.sort((a, b) => {
