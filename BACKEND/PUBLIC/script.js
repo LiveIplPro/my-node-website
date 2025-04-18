@@ -1,5 +1,73 @@
+// Function to fetch next match data from your API
+async function fetchNextMatch() {
+  try {
+    const response = await fetch('https://my-node-website.onrender.com/api/currentMatches');
+    const data = await response.json();
+    
+    if (data && data.data && data.data.length > 0) {
+      // Find the next upcoming match
+      const now = new Date();
+      const upcomingMatches = data.data.filter(match => {
+        const matchDate = new Date(match.date);
+        return matchDate > now;
+      });
+      
+      if (upcomingMatches.length > 0) {
+        // Sort by date to get the next match
+        upcomingMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
+        displayNextMatch(upcomingMatches[0]);
+      } else {
+        showNoMatchMessage();
+      }
+    } else {
+      showNoMatchMessage();
+    }
+  } catch (error) {
+    console.error('Error fetching next match:', error);
+    showError();
+  }
+}
+
+// Function to display next match data
+function displayNextMatch(matchData) {
+  const container = document.getElementById('nextMatchContainer');
+  
+  container.innerHTML = `
+    <div class="next-match-card glass">
+      <h3>Next Match</h3>
+      <div class="match-teams">
+        <div class="team">
+          <i class="fas fa-tshirt team-icon" style="color: #ff0000;"></i>
+          <span>${matchData.teams[0]}</span>
+        </div>
+        <div class="match-vs">VS</div>
+        <div class="team">
+          <i class="fas fa-tshirt team-icon" style="color: #0000ff;"></i>
+          <span>${matchData.teams[1]}</span>
+        </div>
+      </div>
+      <div class="match-details">
+        <p><i class="fas fa-calendar-alt"></i> ${new Date(matchData.date).toLocaleDateString()}</p>
+        <p><i class="fas fa-clock"></i> ${matchData.time || 'Time TBD'}</p>
+        <p><i class="fas fa-map-marker-alt"></i> ${matchData.venue}</p>
+      </div>
+    </div>
+  `;
+}
+
+// Error handling functions
+function showNoMatchMessage() {
+  const container = document.getElementById('nextMatchContainer');
+  container.innerHTML = '<p>No upcoming matches scheduled yet.</p>';
+}
+
+function showError() {
+  const container = document.getElementById('nextMatchContainer');
+  container.innerHTML = '<p>Failed to load next match information. Please try again later.</p>';
+}
+
 // LIVE DATA FETCH
- fetch("https://my-node-website.onrender.com/api/currentMatches") 
+fetch("https://my-node-website.onrender.com/api/currentMatches") 
   .then(response => response.json())
   .then(data => {
     console.log("Live Matches:", data);
@@ -26,16 +94,6 @@
   .catch(error => {
     console.error("❌ Error fetching data:", error);
   });
-
-fetch("https://my-node-website.onrender.com/api/currentMatches") 
-
-  .then(res => res.json())
-  .then(data => {
-    console.log(data); // अब आप इसे DOM में दिखा सकते हो
-  })
-  .catch(err => console.error("Error fetching match data", err));
-
-
 
 // DOM Elements
 const mobileMenuBtn = document.querySelector('.mobile-menu');
@@ -159,12 +217,6 @@ function updateCountdown() {
         if (nextMatchVenue) nextMatchVenue.textContent = '';
         return;
     }
-  // Simple example for subscription form
-  document.getElementById('subscribe-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    alert("Thank you for subscribing!");
-    this.reset();
-  });
     
     // Sort by date to get the next match
     upcomingMatches.sort((a, b) => {
@@ -459,109 +511,6 @@ function openMatchModal(match) {
         updateModalTimer();
         modalCountdownInterval = setInterval(updateModalTimer, 1000);
     }
-
-    // Enhanced Live Stream Button Functionality
-function setupStreamButton() {
-    const streamBtn = document.querySelector('.stream-btn');
-    
-    if (streamBtn) {
-      // Create multiple cricket balls
-      const cricketBallContainer = streamBtn.querySelector('.btn-cricket-ball');
-      for (let i = 0; i < 3; i++) {
-        const ball = document.createElement('span');
-        ball.className = 'cricket-ball';
-        ball.style.cssText = `
-          position: absolute;
-          width: ${Math.random() * 20 + 15}px;
-          height: ${Math.random() * 20 + 15}px;
-          background: linear-gradient(145deg, #d9a441, #f5d073);
-          border-radius: 50%;
-          top: ${Math.random() * 100}%;
-          left: ${Math.random() * 100}%;
-          opacity: 0;
-          transform: scale(0);
-          box-shadow: 0 0 10px rgba(217, 164, 65, 0.5);
-          z-index: -1;
-          animation: cricketBallBounce ${Math.random() * 2 + 3}s infinite ${i * 0.5}s;
-        `;
-        
-        // Add cricket ball seams
-        ball.innerHTML = '<span class="seam"></span><span class="seam reverse"></span>';
-        cricketBallContainer.appendChild(ball);
-      }
-      
-      // Add click handler with transition
-      streamBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // Add page transition class
-        document.body.classList.add('page-transition');
-        
-        // Get the target URL
-        const targetUrl = this.getAttribute('onclick').match(/'([^']+)'/)[1];
-        
-        // Navigate after animation completes
-        setTimeout(() => {
-          window.location.href = targetUrl;
-        }, 500);
-      });
-    }
-  }
-  
-  // Call this in your init()
-  function init() {
-    // ... existing code ...
-    setupStreamButton();
-    // ... existing code ...
-  }
-
-    // Animated Button Functionality
-function setupAnimatedButton() {
-    const animatedBtn = document.querySelector('.animated-btn');
-    
-    if (animatedBtn) {
-      animatedBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // Add page transition class
-        document.body.classList.add('page-transition');
-        
-        // Get the target URL
-        const targetUrl = this.getAttribute('onclick').match(/'([^']+)'/)[1];
-        
-        // Navigate after animation completes
-        setTimeout(() => {
-          window.location.href = targetUrl;
-        }, 500);
-      });
-      
-      // Create multiple particles
-      const particlesContainer = animatedBtn.querySelector('.btn-particles');
-      for (let i = 0; i < 5; i++) {
-        const particle = document.createElement('span');
-        particle.style.cssText = `
-          position: absolute;
-          width: ${Math.random() * 10 + 5}px;
-          height: 2px;
-          background: white;
-          top: 50%;
-          left: 50%;
-          opacity: 0;
-          transform: translate(-50%, -50%);
-          border-radius: 5px;
-          animation: particles ${Math.random() * 2 + 2}s infinite linear ${i * 0.3}s;
-        `;
-        particlesContainer.appendChild(particle);
-      }
-    }
-  }
-  
-  // Call this function in your init()
-  function init() {
-    // ... existing code ...
-    setupAnimatedButton();
-    // ... existing code ...
-  }
     
     // Add animation
     if (typeof gsap !== 'undefined') {
