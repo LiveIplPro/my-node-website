@@ -27,7 +27,7 @@
     console.error("❌ Error fetching data:", error);
   });
 
-  fetch("http://localhost:3001/api/currentMatches")
+fetch("https://my-node-website.onrender.com/api/currentMatches") 
 
   .then(res => res.json())
   .then(data => {
