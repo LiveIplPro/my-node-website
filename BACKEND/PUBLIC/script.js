@@ -1,58 +1,41 @@
 // LIVE DATA FETCH
-function fetchLiveMatches() {
-  fetch("https://my-node-website.onrender.com/api/currentMatches")
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log("Live Matches:", data);
-      updateLiveMatchesUI(data);
-    })
-    .catch(error => {
-      console.error("❌ Error fetching live matches:", error);
-      // Fallback to static data if API fails
-      updateLiveMatchesUI({
-        data: matches.filter(match => match.status === 'live' || match.status === 'completed')
-      });
-    });
-}
+ fetch("https://my-node-website.onrender.com/api/currentMatches") 
+  .then(response => response.json())
+  .then(data => {
+    console.log("Live Matches:", data);
+    // Optional: UI में दिखाना
+    const scheduleDiv = document.getElementById("liveSchedule");
+    if (data && data.data) {
+      scheduleDiv.innerHTML = data.data
+        .map(match => {
+          return `
+            <div class="match-card">
+              <h3>${match.name}</h3>
+              <p><strong>Status:</strong> ${match.status}</p>
+              <p><strong>Venue:</strong> ${match.venue}</p>
+              <p><strong>Teams:</strong> ${match.teams.join(" vs ")}</p>
+              <p><strong>Date:</strong> ${match.date}</p>
+            </div>
+          `;
+        })
+        .join("");
+    } else {
+      scheduleDiv.innerHTML = "⚠️ No match data found.";
+    }
+  })
+  .catch(error => {
+    console.error("❌ Error fetching data:", error);
+  });
 
-function updateLiveMatchesUI(data) {
-  const scheduleDiv = document.getElementById("liveSchedule");
-  if (!scheduleDiv) return;
+fetch("https://my-node-website.onrender.com/api/currentMatches") 
 
-  if (data && data.data && data.data.length > 0) {
-    scheduleDiv.innerHTML = data.data
-      .map(match => {
-        const team1 = teams.find(t => t.shortName === match.team1) || { name: match.team1, shortName: match.team1 };
-        const team2 = teams.find(t => t.shortName === match.team2) || { name: match.team2, shortName: match.team2 };
-        
-        return `
-          <div class="match-card ${match.status === 'live' ? 'live' : ''}">
-            <h3>${team1.shortName} vs ${team2.shortName}</h3>
-            <p><strong>Status:</strong> ${match.status}</p>
-            ${match.team1Score ? `<p><strong>${team1.shortName}:</strong> ${match.team1Score}</p>` : ''}
-            ${match.team2Score ? `<p><strong>${team2.shortName}:</strong> ${match.team2Score}</p>` : ''}
-            ${match.result ? `<p><strong>Result:</strong> ${match.result}</p>` : ''}
-            <p><strong>Venue:</strong> ${match.venue}</p>
-            <p><strong>Date:</strong> ${new Date(match.date).toDateString()}, ${match.time}</p>
-          </div>
-        `;
-      })
-      .join("");
-  } else {
-    scheduleDiv.innerHTML = `
-      <div class="no-matches">
-        <i class="fas fa-info-circle"></i>
-        <p>No live matches currently</p>
-        <p>Check back later for updates</p>
-      </div>
-    `;
-  }
-}
+  .then(res => res.json())
+  .then(data => {
+    console.log(data); // अब आप इसे DOM में दिखा सकते हो
+  })
+  .catch(err => console.error("Error fetching match data", err));
+
+
 
 // DOM Elements
 const mobileMenuBtn = document.querySelector('.mobile-menu');
@@ -236,7 +219,7 @@ function renderHighlightMatch() {
             
             renderHighlightContent(upcomingMatches[0]);
         } else {
-            highlightMatchContainer.innerHTML = '<div class="no-highlight-match"><i class="fas fa-calendar-times"></i><p>No upcoming matches scheduled</p></div>';
+            highlightMatchContainer.innerHTML = '<p>No upcoming matches scheduled</p>';
         }
         return;
     }
@@ -324,7 +307,6 @@ function startHighlightCountdown(matchDate) {
         
         if (distance <= 0) {
             // Match has started, reload the highlight
-            clearInterval(highlightCountdownInterval);
             renderHighlightMatch();
             return;
         }
@@ -430,11 +412,6 @@ function openMatchModal(match) {
             ${match.status === 'live' ? `<p class="modal-result"><strong>Status:</strong> ${match.result}</p>` : ''}
         </div>
         ${timerHTML}
-        <div class="modal-actions">
-            <button class="btn btn-primary stream-btn" onclick="alert('Streaming service would launch here')">
-                <i class="fas fa-tv"></i> Watch Live Stream
-            </button>
-        </div>
     `;
     
     modal.classList.add('active');
@@ -453,7 +430,6 @@ function openMatchModal(match) {
             
             if (distance <= 0) {
                 // Match has started, reload the modal
-                clearInterval(modalCountdownInterval);
                 openMatchModal(match);
                 return;
             }
@@ -476,6 +452,119 @@ function openMatchModal(match) {
         
         updateModalTimer();
         modalCountdownInterval = setInterval(updateModalTimer, 1000);
+    }
+
+    // Enhanced Live Stream Button Functionality
+function setupStreamButton() {
+    const streamBtn = document.querySelector('.stream-btn');
+    
+    if (streamBtn) {
+      // Create multiple cricket balls
+      const cricketBallContainer = streamBtn.querySelector('.btn-cricket-ball');
+      for (let i = 0; i < 3; i++) {
+        const ball = document.createElement('span');
+        ball.className = 'cricket-ball';
+        ball.style.cssText = `
+          position: absolute;
+          width: ${Math.random() * 20 + 15}px;
+          height: ${Math.random() * 20 + 15}px;
+          background: linear-gradient(145deg, #d9a441, #f5d073);
+          border-radius: 50%;
+          top: ${Math.random() * 100}%;
+          left: ${Math.random() * 100}%;
+          opacity: 0;
+          transform: scale(0);
+          box-shadow: 0 0 10px rgba(217, 164, 65, 0.5);
+          z-index: -1;
+          animation: cricketBallBounce ${Math.random() * 2 + 3}s infinite ${i * 0.5}s;
+        `;
+        
+        // Add cricket ball seams
+        ball.innerHTML = '<span class="seam"></span><span class="seam reverse"></span>';
+        cricketBallContainer.appendChild(ball);
+      }
+      
+      // Add click handler with transition
+      streamBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Add page transition class
+        document.body.classList.add('page-transition');
+        
+        // Get the target URL
+        const targetUrl = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+        
+        // Navigate after animation completes
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 500);
+      });
+    }
+  }
+  
+  // Call this in your init()
+  function init() {
+    // ... existing code ...
+    setupStreamButton();
+    // ... existing code ...
+  }
+
+    // Animated Button Functionality
+function setupAnimatedButton() {
+    const animatedBtn = document.querySelector('.animated-btn');
+    
+    if (animatedBtn) {
+      animatedBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Add page transition class
+        document.body.classList.add('page-transition');
+        
+        // Get the target URL
+        const targetUrl = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+        
+        // Navigate after animation completes
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 500);
+      });
+      
+      // Create multiple particles
+      const particlesContainer = animatedBtn.querySelector('.btn-particles');
+      for (let i = 0; i < 5; i++) {
+        const particle = document.createElement('span');
+        particle.style.cssText = `
+          position: absolute;
+          width: ${Math.random() * 10 + 5}px;
+          height: 2px;
+          background: white;
+          top: 50%;
+          left: 50%;
+          opacity: 0;
+          transform: translate(-50%, -50%);
+          border-radius: 5px;
+          animation: particles ${Math.random() * 2 + 2}s infinite linear ${i * 0.3}s;
+        `;
+        particlesContainer.appendChild(particle);
+      }
+    }
+  }
+  
+  // Call this function in your init()
+  function init() {
+    // ... existing code ...
+    setupAnimatedButton();
+    // ... existing code ...
+  }
+    
+    // Add animation
+    if (typeof gsap !== 'undefined') {
+        gsap.from('.modal-content', {
+            duration: 0.3,
+            scale: 0.9,
+            opacity: 0,
+            ease: 'back.out(1.7)'
+        });
     }
 }
 
@@ -531,6 +620,16 @@ function openTeamModal(team) {
     
     teamModal.classList.add('active');
     document.body.classList.add('no-scroll');
+    
+    // Add animation
+    if (typeof gsap !== 'undefined') {
+        gsap.from('.modal-content', {
+            duration: 0.3,
+            scale: 0.9,
+            opacity: 0,
+            ease: 'back.out(1.7)'
+        });
+    }
 }
 
 function closeModal() {
@@ -591,7 +690,7 @@ function renderTeams() {
 function renderStats(statType) {
     if (!statsContainer) return;
     
-   let stats = [];
+    let stats = [];
     let headers = [];
     
     switch(statType) {
