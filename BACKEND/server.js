@@ -155,14 +155,14 @@ app.get("/health", (req, res) => {
 
 // Serve static files - UPDATED PATH TO MATCH YOUR STRUCTURE
 const publicRoot = path.join(__dirname, 'PUBLIC'); // Changed from 'public' to 'PUBLIC'
-console.log(Serving static files from: ${publicRoot}); // Debug log
+console.log(`Serving static files from: ${publicRoot}`); // Debug log
 
 app.use(express.static(publicRoot));
 
 // SPA routes - UPDATED TO MATCH YOUR STRUCTURE
 app.get(['/', '/live', '/schedule', '/predictions'], (req, res) => {
   const filePath = path.join(publicRoot, 'index.html');
-  console.log(Attempting to send file: ${filePath}); // Debug log
+  console.log(`Attempting to send file: ${filePath}`); // Debug log
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error('Error sending file:', err);
