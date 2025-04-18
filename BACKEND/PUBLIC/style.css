@@ -40,6 +40,150 @@ body {
     position: relative;
 }
 
+/* Footer Styles */
+.footer {
+  background: #111;
+  color: #fff;
+  padding: 50px 20px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeInUp 1s ease-in;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-about,
+.footer-links,
+.footer-subscribe {
+  flex: 1 1 250px;
+  margin: 20px;
+}
+
+.footer-about h2 {
+  font-size: 28px;
+  color: #00d8ff;
+  margin-bottom: 10px;
+}
+
+.footer-links h3,
+.footer-subscribe h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #00d8ff;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links ul li a {
+  color: #ccc;
+  text-decoration: none;
+  display: block;
+  margin: 8px 0;
+  transition: all 0.3s;
+}
+
+.footer-links ul li a:hover {
+  color: #fff;
+  transform: translateX(5px);
+}
+
+.footer-subscribe form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.footer-subscribe input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+}
+
+.footer-subscribe button {
+  padding: 10px 20px;
+  background: #00d8ff;
+  border: none;
+  color: #000;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.footer-subscribe button:hover {
+  background: #00aacc;
+}
+
+.social-icons {
+  margin-top: 15px;
+}
+
+.social-icons a {
+  color: #ccc;
+  margin-right: 15px;
+  font-size: 20px;
+  transition: transform 0.3s, color 0.3s;
+}
+
+.social-icons a:hover {
+  color: #00d8ff;
+  transform: scale(1.2);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 15px;
+  border-top: 1px solid #333;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-about,
+  .footer-links,
+  .footer-subscribe {
+    text-align: center;
+  }
+
+  .footer-subscribe form {
+    flex-direction: column;
+  }
+
+  .footer-subscribe input,
+  .footer-subscribe button {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+
 /* Animated Background */
 .animated-bg {
     position: fixed;
