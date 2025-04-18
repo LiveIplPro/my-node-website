@@ -78,7 +78,7 @@ const iplSchedule2025 = [
   
   // Team logos mapping
   const teamLogos = {
-      "Kolkata Knight Riders": "https://i.imgur.com/LsT0VWz.jpeg",
+      "Kolkata Knight Riders": "https://i.imgur.com/h9UQ8ka.jpeg",
       "Royal Challengers Bengaluru": "https://i.imgur.com/e51T5so.jpeg",
       "Sunrisers Hyderabad": "https://i.imgur.com/CyxeuGq.jpeg ",
       "Rajasthan Royals": "https://i.imgur.com/wiUl1x1.jpeg",
