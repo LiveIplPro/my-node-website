@@ -1,3 +1,5 @@
+fetch("https://my-node-website.onrender.co/api/currentMatches")
+
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
