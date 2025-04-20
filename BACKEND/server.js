@@ -18,6 +18,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Ye line add karo:
+app.use('/ads.txt', express.static(path.join(__dirname, 'ads.txt')));
+
 // Middleware
 app.use(cors());
 app.use(express.json());
