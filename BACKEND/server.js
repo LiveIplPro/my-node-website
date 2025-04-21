@@ -18,7 +18,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'PUBLIC')));
 app.get('/test-verification', (req, res) => {
   res.sendFile(path.join(__dirname, 'PUBLIC', 'google123456789abcdef.html'));
 });
