@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
@@ -18,15 +17,15 @@ app.use((req, res, next) => {
   next();
 });
 
-const publicRoot = path.join(__dirname, 'PUBLIC');
-app.use(express.static(publicRoot));
-
-// Ye line add karo:
-app.use('/ads.txt', express.static(path.join(__dirname, 'ads.txt')));
-
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Static files serving
+const publicRoot = path.join(__dirname, 'PUBLIC');
+console.log(`Serving static files from: ${publicRoot}`);
+app.use(express.static(publicRoot));
+app.use('/ads.txt', express.static(path.join(__dirname, 'ads.txt')));
 
 // Rate Limiting
 const apiLimiter = rateLimit({
@@ -160,17 +159,9 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Serve static files - UPDATED PATH TO MATCH YOUR STRUCTURE
-const publicRoot = path.join(__dirname, 'PUBLIC'); // Changed from 'public' to 'PUBLIC'
-console.log(`Serving static files from: ${publicRoot}`); // Debug log
-
-app.use(express.static(publicRoot));
-
-// SPA routes - UPDATED TO MATCH YOUR STRUCTURE
+// SPA routes - should come after static files serving
 app.get(['/', '/live', '/schedule', '/predictions'], (req, res) => {
-  const filePath = path.join(publicRoot, 'index.html');
-  console.log(`Attempting to send file: ${filePath}`); // Debug log
-  res.sendFile(filePath, (err) => {
+  res.sendFile(path.join(publicRoot, 'index.html'), (err) => {
     if (err) {
       console.error('Error sending file:', err);
       res.status(500).send('Error loading page');
