@@ -19,6 +19,10 @@ app.use((req, res, next) => {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.get('/test-verification', (req, res) => {
+  res.sendFile(path.join(__dirname, 'PUBLIC', 'google123456789abcdef.html'));
+});
+
 
 // Ye line add karo:
 app.use('/ads.txt', express.static(path.join(__dirname, 'ads.txt')));
