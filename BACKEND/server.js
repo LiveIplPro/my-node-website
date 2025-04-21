@@ -18,6 +18,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Ye line add karo:
 app.use('/ads.txt', express.static(path.join(__dirname, 'ads.txt')));
 
