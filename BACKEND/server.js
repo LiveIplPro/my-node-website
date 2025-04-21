@@ -18,8 +18,19 @@ app.use((req, res, next) => {
   next();
 });
 
-const publicRoot = path.join(__dirname, 'PUBLIC');
+const publicRoot = path.join(__dirname, 'public');
 app.use(express.static(publicRoot));
+
+const fs = require('fs');
+const publicFolderPath = path.join(__dirname, 'public');
+
+if (fs.existsSync(publicFolderPath)) {
+  app.use(express.static(publicFolderPath));
+  console.log(`✅ Serving static files from: ${publicFolderPath}`);
+} else {
+  console.warn(`⚠️ PUBLIC folder not found at: ${publicFolderPath}`);
+}
+
 
 
 // Ye line add karo:
