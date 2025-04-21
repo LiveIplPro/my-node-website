@@ -20,9 +20,6 @@ app.use((req, res, next) => {
 
 const publicRoot = path.join(__dirname, 'PUBLIC');
 app.use(express.static(publicRoot));
-app.get('/test-verification', (req, res) => {
-  res.sendFile(path.join(__dirname, 'PUBLIC', 'google123456789abcdef.html'));
-});
 
 
 // Ye line add karo:
