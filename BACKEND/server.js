@@ -11,6 +11,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const RETRY_DELAY = parseInt(process.env.RETRY_DELAY_MS) || 500;
 
+// Add this line to serve robots.txt
+app.use('/robots.txt', express.static(path.join(__dirname, 'robots.txt')));
+
 // Basic logging middleware (replacing morgan)
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
