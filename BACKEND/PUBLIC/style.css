@@ -183,6 +183,23 @@ body {
   }
 }
 
+/* Glass Effect */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    transition: var(--transition);
+}
+
+.glass:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
 
 /* Animated Background */
 .animated-bg {
