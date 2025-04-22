@@ -13,6 +13,8 @@ const RETRY_DELAY = parseInt(process.env.RETRY_DELAY_MS) || 500;
 
 // Add this line to serve robots.txt
 app.use('/robots.txt', express.static(path.join(__dirname, 'robots.txt')));
+app.use('/sitemap.xml', express.static(path.join(__dirname, 'sitemap.xml')));
+
 
 // Basic logging middleware (replacing morgan)
 app.use((req, res, next) => {
