@@ -11,6 +11,52 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const RETRY_DELAY = parseInt(process.env.RETRY_DELAY_MS) || 500;
 
+// Points Table Data
+const pointsTable = [
+  {
+    name: "Mumbai Indians",
+    logo: "https://i.imgur.com/R1m23jr.jpeg",
+    matches: 7,
+    won: 5,
+    lost: 2,
+    tied: 0,
+    noResult: 0,
+    points: 10,
+    nrr: "+0.785"
+  },
+  {
+    name: "Chennai Super Kings",
+    logo: "https://i.imgur.com/a1y2CwB.jpeg",
+    matches: 7,
+    won: 4,
+    lost: 3,
+    tied: 0,
+    noResult: 0,
+    points: 8,
+    nrr: "+0.123"
+  }
+  // Add more teams as needed
+];
+
+// API Endpoint
+app.get('/api/pointsTable', (req, res) => {
+  res.json(pointsTable);
+});
+
+// Serve Static Files
+app.use(express.static(path.join(__dirname, 'PUBLIC')));
+
+// Fallback Route
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'PUBLIC', 'index.html'));
+});
+
+// Start Server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 // Add this line to serve robots.txt
 app.use('/robots.txt', express.static(path.join(__dirname, 'robots.txt')));
 app.use('/sitemap.xml', express.static(path.join(__dirname, 'sitemap.xml')));
