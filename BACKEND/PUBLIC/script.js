@@ -1,3 +1,143 @@
+function showTeamDetails(team) {
+  // मोडल का element ढूंढें
+  const modal = document.getElementById('teamModal');
+  const modalContent = document.querySelector('.modal-content');
+  
+  // अगर मोडल नहीं मिला तो रुक जाएं
+  if (!modal || !modalContent) return;
+  
+  // मोडल में HTML कंटेंट भरें
+  modalContent.innerHTML = `
+    <div class="modal-header">
+      <span class="close-modal">&times;</span>
+      <img src="${team.logo}" alt="${team.name}" class="modal-team-logo">
+      <h2>${team.name}</h2>
+      <p class="modal-subtitle">Captain: ${team.captain}</p>
+    </div>
+    <div class="modal-body">
+      <div class="stat-row">
+        <div class="stat-label">
+          <i class="fas fa-trophy"></i>
+          <span>Trophies Won</span>
+        </div>
+        <div class="stat-value">${team.trophies || 0}</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">
+          <i class="fas fa-flag"></i>
+          <span>Total Matches</span>
+        </div>
+        <div class="stat-value">${team.matches || 'N/A'}</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">
+          <i class="fas fa-check-circle"></i>
+          <span>Matches Won</span>
+        </div>
+        <div class="stat-value">${team.wins || 'N/A'}</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">
+          <i class="fas fa-times-circle"></i>
+          <span>Matches Lost</span>
+        </div>
+        <div class="stat-value">${team.losses || 'N/A'}</div>
+      </div>
+      <div class="team-description">
+        <h3>About ${team.name}</h3>
+        <p>${team.description || 'No description available.'}</p>
+      </div>
+    </div>
+  `;
+  
+  // मोडल दिखाएं
+  modal.style.display = 'block';
+  document.body.classList.add('no-scroll');
+  
+  // क्लोज बटन पर क्लिक इवेंट जोड़ें
+  modalContent.querySelector('.close-modal').addEventListener('click', () => {
+    modal.style.display = 'none';
+    document.body.classList.remove('no-scroll');
+  });
+}
+
+function renderTeams(teams) {
+  // टीम ग्रिड का element ढूंढें
+  const teamsGrid = document.getElementById('teamsGrid');
+  
+  // अगर element नहीं मिला तो रुक जाएं
+  if (!teamsGrid) return;
+  
+  // हर टीम के लिए HTML बनाएं
+  teamsGrid.innerHTML = teams.map(team => `
+    <div class="team-profile glass" data-team="${team.name}">
+      <div class="team-profile-inner">
+        <img src="${team.logo}" alt="${team.name}" class="team-profile-logo">
+        <div class="team-profile-content">
+          <h3 class="team-profile-name">${team.name}</h3>
+          <p class="team-profile-captain">Captain: ${team.captain}</p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  // हर टीम पर क्लिक करने का इवेंट जोड़ें
+  document.querySelectorAll('.team-profile').forEach(teamCard => {
+    const teamName = teamCard.getAttribute('data-team');
+    const team = teams.find(t => t.name === teamName);
+    
+    teamCard.addEventListener('click', () => {
+      showTeamDetails(team);
+    });
+  });
+}
+
+async function fetchAndRenderTeams() {
+  try {
+    // API से डेटा लाने की कोशिश करें
+    const response = await fetch('https://my-node-website.onrender.com/api/teams');
+    
+    // अगर API ने error दिया तो
+    if (!response.ok) {
+      throw new Error('API से डेटा नहीं मिला');
+    }
+    
+    // डेटा को JSON में बदलें
+    const data = await response.json();
+    
+    // टीमों को दिखाएं
+    renderTeams(data);
+  } catch (error) {
+    console.error('त्रुटि:', error);
+    
+    // अगर API फेल हो तो हार्डकोडेड डेटा दिखाएं
+    const backupTeams = [
+      {
+        name: "Chennai Super Kings",
+        captain: "Ruturaj Gaikwad",
+        logo: "https://i.imgur.com/LsT0VWz.jpeg",
+        trophies: 5,
+        matches: 210,
+        wins: 130,
+        losses: 80,
+        description: "Chennai Super Kings is one of the most successful teams in IPL history."
+      },
+      {
+        name: "Mumbai Indians", 
+        captain: "Hardik Pandya",
+        logo: "https://i.imgur.com/R1m23jr.jpeg",
+        trophies: 5,
+        matches: 231,
+        wins: 129,
+        losses: 98,
+        description: "Mumbai Indians is the most successful team in IPL history."
+      }
+    ];
+    
+    renderTeams(backupTeams);
+  }
+}
+
 // Function to fetch next match data from your API
 async function fetchNextMatch() {
   try {
