@@ -11,6 +11,39 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const RETRY_DELAY = parseInt(process.env.RETRY_DELAY_MS) || 500;
 
+// Express route for teams data
+const teamsData = require('./data/teams.json'); // या database से fetch करें
+
+app.get('/api/teams', (req, res) => {
+  try {
+    res.json([
+      {
+        "name": "Chennai Super Kings",
+        "captain": "Ruturaj Gaikwad",
+        "logo": "https://i.imgur.com/LsT0VWz.jpeg",
+        "trophies": 5,
+        "matches": 210,
+        "wins": 130,
+        "losses": 80,
+        "description": "Chennai Super Kings is one of the most successful teams in IPL history."
+      },
+      {
+        "name": "Mumbai Indians",
+        "captain": "Hardik Pandya",
+        "logo": "https://i.imgur.com/R1m23jr.jpeg",
+        "trophies": 5,
+        "matches": 231,
+        "wins": 129,
+        "losses": 98,
+        "description": "Mumbai Indians is the most successful team in IPL history."
+      }
+      // अन्य teams add करें
+    ]);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Points Table Data
 const pointsTable = [
   {
