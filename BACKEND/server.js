@@ -69,28 +69,109 @@ app.get('/api/pointsTable', (req, res) => {
 
 // Teams डेटा के लिए API रूट
 app.get('/api/teams', (req, res) => {
-  const teamsData = [
-    {
-      name: "Chennai Super Kings",
-      captain: "Ruturaj Gaikwad",
-      logo: "https://i.imgur.com/LsT0VWz.jpeg",
-      trophies: 5,
-      matches: 210,
-      wins: 130,
-      losses: 80,
-      description: "Chennai Super Kings is one of the most successful teams in IPL history."
-    },
-    {
-      name: "Mumbai Indians",
-      captain: "Hardik Pandya",
-      logo: "https://i.imgur.com/R1m23jr.jpeg",
-      trophies: 5,
-      matches: 231,
-      wins: 129,
-      losses: 98,
-      description: "Mumbai Indians is the most successful team in IPL history."
-    }
-  ];
+  const teamsData =[
+  {
+    "name": "Chennai Super Kings",
+    "captain": "Ruturaj Gaikwad",
+    "logo": "https://i.imgur.com/LsT0VWz.jpeg",
+    "trophies": 5,
+    "matches": 210,
+    "wins": 130,
+    "losses": 80,
+    "description": "Chennai Super Kings is one of the most consistent and successful teams in IPL history."
+  },
+  {
+    "name": "Mumbai Indians",
+    "captain": "Hardik Pandya",
+    "logo": "https://i.imgur.com/R1m23jr.jpeg",
+    "trophies": 5,
+    "matches": 231,
+    "wins": 129,
+    "losses": 98,
+    "description": "Mumbai Indians has a legacy of dominance and is the most successful team in IPL history."
+  },
+  {
+    "name": "Royal Challengers Bangalore",
+    "captain": "Faf du Plessis",
+    "logo": "https://i.imgur.com/1nlzE1Z.jpeg",
+    "trophies": 0,
+    "matches": 227,
+    "wins": 107,
+    "losses": 120,
+    "description": "RCB is known for its passionate fan base and high-profile players, always strong contenders."
+  },
+  {
+    "name": "Kolkata Knight Riders",
+    "captain": "Shreyas Iyer",
+    "logo": "https://i.imgur.com/V1FJkB1.jpeg",
+    "trophies": 2,
+    "matches": 224,
+    "wins": 115,
+    "losses": 109,
+    "description": "KKR has a rich history with two titles and strong performances under pressure."
+  },
+  {
+    "name": "Rajasthan Royals",
+    "captain": "Sanju Samson",
+    "logo": "https://i.imgur.com/RJv7z0O.jpeg",
+    "trophies": 1,
+    "matches": 194,
+    "wins": 98,
+    "losses": 96,
+    "description": "Winners of the inaugural IPL, RR is known for nurturing young talent and competitive spirit."
+  },
+  {
+    "name": "Delhi Capitals",
+    "captain": "Rishabh Pant",
+    "logo": "https://i.imgur.com/yQgM2Pt.jpeg",
+    "trophies": 0,
+    "matches": 216,
+    "wins": 102,
+    "losses": 114,
+    "description": "Delhi Capitals has transformed into a competitive unit with a young and fearless core."
+  },
+  {
+    "name": "Sunrisers Hyderabad",
+    "captain": "Pat Cummins",
+    "logo": "https://i.imgur.com/UCtEVkS.jpeg",
+    "trophies": 1,
+    "matches": 177,
+    "wins": 90,
+    "losses": 87,
+    "description": "Sunrisers Hyderabad won the IPL in 2016 and are known for their strong bowling attack."
+  },
+  {
+    "name": "Punjab Kings",
+    "captain": "Shikhar Dhawan",
+    "logo": "https://i.imgur.com/G9daVlQ.jpeg",
+    "trophies": 0,
+    "matches": 218,
+    "wins": 98,
+    "losses": 120,
+    "description": "Punjab Kings have a strong squad but are still chasing their first IPL title."
+  },
+  {
+    "name": "Gujarat Titans",
+    "captain": "Shubman Gill",
+    "logo": "https://i.imgur.com/BpqFi7Y.jpeg",
+    "trophies": 1,
+    "matches": 32,
+    "wins": 22,
+    "losses": 10,
+    "description": "Gujarat Titans made a dream debut in 2022 by winning the title and remain strong contenders."
+  },
+  {
+    "name": "Lucknow Super Giants",
+    "captain": "KL Rahul",
+    "logo": "https://i.imgur.com/OwSCsrg.jpeg",
+    "trophies": 0,
+    "matches": 30,
+    "wins": 18,
+    "losses": 12,
+    "description": "Lucknow Super Giants have impressed with their balanced squad and consistent playoff runs."
+  }
+]
+
   res.json(teamsData);
 });
 
