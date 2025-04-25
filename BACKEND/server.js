@@ -10,9 +10,30 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const RETRY_DELAY = parseInt(process.env.RETRY_DELAY_MS) || 500;
-catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Basic logging middleware (replacing morgan)
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// Static files serving
+const publicRoot = path.join(__dirname, 'PUBLIC');
+console.log(`Serving static files from: ${publicRoot}`);
+app.use(express.static(publicRoot));
+app.use('/ads.txt', express.static(path.join(__dirname, 'ads.txt')));
+app.use('/robots.txt', express.static(path.join(__dirname, 'robots.txt')));
+app.use('/sitemap.xml', express.static(path.join(__dirname, 'sitemap.xml')));
+
+// Rate Limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests, please try again later."
 });
 
 // Points Table Data
@@ -39,54 +60,38 @@ const pointsTable = [
     points: 8,
     nrr: "+0.123"
   }
-  // Add more teams as needed
 ];
 
-// API Endpoint
+// API Endpoint for Points Table
 app.get('/api/pointsTable', (req, res) => {
   res.json(pointsTable);
 });
 
-// Serve Static Files
-app.use(express.static(path.join(__dirname, 'PUBLIC')));
-
-// Fallback Route
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'PUBLIC', 'index.html'));
-});
-
-// Start Server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-// Add this line to serve robots.txt
-app.use('/robots.txt', express.static(path.join(__dirname, 'robots.txt')));
-app.use('/sitemap.xml', express.static(path.join(__dirname, 'sitemap.xml')));
-
-
-// Basic logging middleware (replacing morgan)
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Static files serving
-const publicRoot = path.join(__dirname, 'PUBLIC');
-console.log(`Serving static files from: ${publicRoot}`);
-app.use(express.static(publicRoot));
-app.use('/ads.txt', express.static(path.join(__dirname, 'ads.txt')));
-
-// Rate Limiting
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: "Too many requests, please try again later."
+// Teams डेटा के लिए API रूट
+app.get('/api/teams', (req, res) => {
+  const teamsData = [
+    {
+      name: "Chennai Super Kings",
+      captain: "Ruturaj Gaikwad",
+      logo: "https://i.imgur.com/LsT0VWz.jpeg",
+      trophies: 5,
+      matches: 210,
+      wins: 130,
+      losses: 80,
+      description: "Chennai Super Kings is one of the most successful teams in IPL history."
+    },
+    {
+      name: "Mumbai Indians",
+      captain: "Hardik Pandya",
+      logo: "https://i.imgur.com/R1m23jr.jpeg",
+      trophies: 5,
+      matches: 231,
+      wins: 129,
+      losses: 98,
+      description: "Mumbai Indians is the most successful team in IPL history."
+    }
+  ];
+  res.json(teamsData);
 });
 
 // Cache
@@ -229,3 +234,4 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`Static files being served from: ${publicRoot}`);
 });
+
