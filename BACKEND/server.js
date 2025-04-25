@@ -36,10 +36,6 @@ const apiLimiter = rateLimit({
   message: "Too many requests, please try again later."
 });
 
-// API Endpoint for Points Table
-app.get('/api/pointsTable', (req, res) => {
-  res.json(pointsTable);
-});
 
 // Teams डेटा के लिए API रूट
 app.get('/api/teams', (req, res) => {
@@ -145,9 +141,6 @@ app.get('/api/teams', (req, res) => {
       description: "Sunrisers Hyderabad won the IPL in 2016 and are known for their strong bowling attack."
     }
   ];
-
-  res.json(teamsData);
-});
 
   res.json(teamsData);
 });
