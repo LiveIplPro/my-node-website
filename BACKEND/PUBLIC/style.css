@@ -428,6 +428,7 @@ header {
     margin-top: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    color: white;
 }
 
 /* Common Styles for Both Buttons */
@@ -677,6 +678,7 @@ header {
         transform: translateX(100%);
     }
 }
+
 /* Teams Section */
 .teams-grid {
     display: grid;
@@ -836,98 +838,7 @@ header {
     color: #aaa;
 }
 
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .footer-about,
-    .footer-links,
-    .footer-subscribe {
-        text-align: center;
-    }
-
-    .footer-subscribe form {
-        flex-direction: column;
-    }
-
-    .footer-subscribe input,
-    .footer-subscribe button {
-        width: 100%;
-        border-radius: 4px;
-        margin-bottom: 10px;
-    }
-}
-
-/* Animations */
-@keyframes fadeInUp {
-    0% {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0px);
-        opacity: 1;
-    }
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 992px) {
-    .hero {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .hero-content {
-        margin-bottom: 30px;
-    }
-    
-    .nav-links {
-        position: fixed;
-        top: 80px;
-        left: 0;
-        width: 100%;
-        background: var(--darker-color);
-        flex-direction: column;
-        align-items: center;
-        padding: 20px 0;
-        gap: 15px;
-        transform: translateY(-150%);
-        transition: var(--transition);
-        z-index: 99;
-    }
-    
-    .nav-links.active {
-        transform: translateY(0);
-    }
-    
-    .mobile-menu, .theme-toggle {
-        display: block;
-    }
-    
-    .matches-container, .teams-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    }
-}
-
-@media (max-width: 768px) {
-    .hero h1 {
-        font-size: 2.2rem;
-    }
-    
-    .section-header h2 {
-        font-size: 1.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .matches-container {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Team Modal Styles - Rectangular Enhanced */
+/* Team Modal Styles */
 .modal {
   display: none;
   position: fixed;
@@ -1223,33 +1134,62 @@ header {
   }
 }
 
-/* Add these new styles to your existing style.css */
-.match-card .team-logo {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  margin-bottom: 10px;
+/* Mobile Responsiveness */
+@media (max-width: 992px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .hero-content {
+    margin-bottom: 30px;
+  }
+  
+  .nav-links {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: var(--darker-color);
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    gap: 15px;
+    transform: translateY(-150%);
+    transition: var(--transition);
+    z-index: 99;
+  }
+  
+  .nav-links.active {
+    transform: translateY(0);
+  }
+  
+  .mobile-menu, .theme-toggle {
+    display: block;
+  }
+  
+  .matches-container, .teams-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
 }
 
-.next-match-card .team-logo {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  margin-bottom: 8px;
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+  }
 }
 
-.match-status {
-  display: inline-block;
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-top: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: white;
+@media (max-width: 480px) {
+  .matches-container {
+    grid-template-columns: 1fr;
+  }
 }
 
+/* Error and Loading States */
 .error-message {
   color: #ff4757;
   background: rgba(255, 71, 87, 0.1);
@@ -1270,7 +1210,41 @@ header {
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Points Table Styles */
+.points-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.points-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.points-table th, 
+.points-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.points-table th {
+  background: rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+}
+
+.points-table tr:hover {
+  background: rgba(0, 180, 255, 0.1);
+}
+
+.team-logo-small {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+/* No Scroll Class */
+.no-scroll {
+  overflow: hidden;
 }
