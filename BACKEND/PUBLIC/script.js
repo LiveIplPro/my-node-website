@@ -5,9 +5,11 @@ const themeToggle = document.querySelector('.theme-toggle');
 const nextMatchContainer = document.getElementById('nextMatchContainer');
 const liveSchedule = document.getElementById('liveSchedule');
 const teamsGrid = document.getElementById('teamsGrid');
-const pointsTableContainer = document.getElementById('pointsTableContainer'); // NEW
+const pointsTableContainer = document.getElementById('pointsTableContainer');
 const modal = document.getElementById('teamModal');
 const modalContent = document.querySelector('.modal-content') || modal;
+const streamBtn = document.getElementById('streamBtn');
+const scheduleBtn = document.getElementById('scheduleBtn');
 
 // API Configuration
 const API_BASE_URL = 'https://my-node-website.onrender.com';
@@ -15,7 +17,21 @@ const ENDPOINTS = {
   LIVE_MATCHES: `${API_BASE_URL}/api/currentMatches`,
   TEAMS: `${API_BASE_URL}/api/teams`,
   NEXT_MATCH: `${API_BASE_URL}/api/nextMatch`,
-  POINTS_TABLE: `${API_BASE_URL}/api/pointsTable` // NEW
+  POINTS_TABLE: `${API_BASE_URL}/api/pointsTable`
+};
+
+// Team logos mapping
+const TEAM_LOGOS = {
+  "Chennai Super Kings": "https://i.imgur.com/LsT0VWz.jpeg",
+  "Delhi Capitals": "https://i.imgur.com/B53ByLk.jpeg",
+  "Gujarat Titans": "https://i.imgur.com/j2rnJko.jpeg",
+  "Kolkata Knight Riders": "https://i.imgur.com/vh6Kf1N.jpeg",
+  "Lucknow Super Giants": "https://i.imgur.com/XZbFpTw.jpeg",
+  "Mumbai Indians": "https://i.imgur.com/R1m23jr.jpeg",
+  "Punjab Kings": "https://i.imgur.com/BwTipSE.jpeg",
+  "Rajasthan Royals": "https://i.imgur.com/wiUl1x1.jpeg",
+  "Royal Challengers Bengaluru": "https://i.imgur.com/e51T5so.jpeg",
+  "Sunrisers Hyderabad": "https://i.imgur.com/CyxeuGq.jpeg"
 };
 
 // Mobile Menu Toggle
@@ -32,6 +48,15 @@ function toggleTheme() {
   icon.classList.toggle('fa-moon');
   icon.classList.toggle('fa-sun');
   localStorage.setItem('theme', newTheme);
+}
+
+// Button event handlers
+function handleStreamButtonClick() {
+  alert('Live streaming will start soon!');
+}
+
+function handleScheduleButtonClick() {
+  window.location.href = '/schedule/index.html';
 }
 
 // Fetch data from API with error handling
@@ -90,9 +115,9 @@ function displayNextMatch(matchData) {
     <div class="next-match-card glass">
       <h3>Next Match</h3>
       <div class="match-teams">
-        <div class="team"><i class="fas fa-tshirt team-icon" style="color: #ff0000;"></i><span>${matchData.teams[0]}</span></div>
+        <div class="team"><img src="${TEAM_LOGOS[matchData.teams[0]] || ''}" alt="${matchData.teams[0]}" class="team-logo"><span>${matchData.teams[0]}</span></div>
         <div class="match-vs">VS</div>
-        <div class="team"><i class="fas fa-tshirt team-icon" style="color: #0000ff;"></i><span>${matchData.teams[1]}</span></div>
+        <div class="team"><img src="${TEAM_LOGOS[matchData.teams[1]] || ''}" alt="${matchData.teams[1]}" class="team-logo"><span>${matchData.teams[1]}</span></div>
       </div>
       <div class="match-details">
         <p><i class="fas fa-calendar-alt"></i> ${new Date(matchData.date).toLocaleDateString()}</p>
@@ -153,9 +178,9 @@ async function fetchAndRenderLiveMatches() {
   liveSchedule.innerHTML = filtered.map(match => `
     <div class="match-card glass">
       <div class="match-teams">
-        <div class="team"><span>${match.teams[0]}</span></div>
+        <div class="team"><img src="${TEAM_LOGOS[match.teams[0]] || ''}" alt="${match.teams[0]}" class="team-logo"><span>${match.teams[0]}</span></div>
         <div class="match-vs">VS</div>
-        <div class="team"><span>${match.teams[1]}</span></div>
+        <div class="team"><img src="${TEAM_LOGOS[match.teams[1]] || ''}" alt="${match.teams[1]}" class="team-logo"><span>${match.teams[1]}</span></div>
       </div>
       <div class="match-info">
         <p><i class="fas fa-calendar-alt"></i> ${new Date(match.date).toLocaleDateString()}</p>
@@ -179,7 +204,7 @@ async function fetchAndRenderTeams() {
   teamsGrid.innerHTML = teams.map(team => `
     <div class="team-profile glass" data-team="${team.name}">
       <div class="team-profile-inner">
-        <img src="${team.logo}" alt="${team.name}" class="team-profile-logo">
+        <img src="${TEAM_LOGOS[team.name] || team.logo}" alt="${team.name}" class="team-profile-logo">
         <div class="team-profile-content">
           <h3 class="team-profile-name">${team.name}</h3>
           <p class="team-profile-captain">Captain: ${team.captain}</p>
@@ -201,7 +226,7 @@ function showTeamDetails(team) {
   modalContent.innerHTML = `
     <div class="modal-header">
       <span class="close-modal">&times;</span>
-      <img src="${team.logo}" alt="${team.name}" class="modal-team-logo">
+      <img src="${TEAM_LOGOS[team.name] || team.logo}" alt="${team.name}" class="modal-team-logo">
       <h2>${team.name}</h2>
       <p class="modal-subtitle">Captain: ${team.captain}</p>
     </div>
@@ -265,7 +290,7 @@ async function fetchAndRenderPointsTable() {
           ${points.map((team, index) => `
             <tr>
               <td>${index + 1}</td>
-              <td><img src="${team.logo}" alt="${team.name}" class="team-logo-small"> ${team.name}</td>
+              <td><img src="${TEAM_LOGOS[team.name] || team.logo}" alt="${team.name}" class="team-logo-small"> ${team.name}</td>
               <td>${team.played}</td>
               <td>${team.won}</td>
               <td>${team.lost}</td>
@@ -291,10 +316,12 @@ async function init() {
   }
   if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
   if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+  if (streamBtn) streamBtn.addEventListener('click', handleStreamButtonClick);
+  if (scheduleBtn) scheduleBtn.addEventListener('click', handleScheduleButtonClick);
 
   await fetchNextMatch();
   await fetchAndRenderLiveMatches();
   await fetchAndRenderTeams();
-  await fetchAndRenderPointsTable(); // NEW
+  await fetchAndRenderPointsTable();
 }
 document.addEventListener('DOMContentLoaded', init);
