@@ -11,7 +11,7 @@
   <!-- Open Graph -->
   <meta property="og:title" content="IPL 2025 - Premium Cricket Experience">
   <meta property="og:description" content="Get real-time IPL 2025 scores, updates, schedules, and exclusive content.">
-  <meta property="og:image" content="https://yourdomain.com/banner.jpg">
+  <meta property="og:image" content="https://i.imgur.com/mVMNx6m.jpeg">
   <meta property="og:url" content="https://yourdomain.com">
   <meta property="og:type" content="website">
 
@@ -19,10 +19,10 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="IPL 2025 - Premium Cricket Experience">
   <meta name="twitter:description" content="Live scores, stats, match schedule and more from IPL 2025.">
-  <meta name="twitter:image" content="https://yourdomain.com/banner.jpg">
+  <meta name="twitter:image" content="https://i.imgur.com/mVMNx6m.jpeg">
 
   <!-- Security -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://pagead2.googlesyndication.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://pagead2.googlesyndication.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com; img-src 'self' https://i.imgur.com">
 
   <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -100,7 +100,7 @@
     </section>
 
     <div class="stream-btn-container glass">
-      <button class="animated-btn" aria-label="Watch live streaming">
+      <button id="streamBtn" class="animated-btn" aria-label="Watch live streaming">
         <span class="btn-text">Watch Live Streaming</span>
         <span class="btn-icon">
           <i class="fas fa-tv"></i>
@@ -113,7 +113,7 @@
     </div>
 
     <div class="animated-btn-container glass">
-      <button class="animated-btn" onclick="window.location.href='/schedule/index.html'">
+      <button id="scheduleBtn" class="animated-btn">
         <span class="btn-text">View Full Schedule</span>
         <span class="btn-icon"><i class="fas fa-calendar-alt"></i></span>
         <span class="btn-cricket-ball"></span>
@@ -168,7 +168,6 @@
       </div>
     </div>
   </div>
-  
 
   <footer class="footer">
     <div class="footer-container">
