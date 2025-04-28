@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teams - CricketZone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/teams/teams.css">
+</head>
+<body>
+  <div class="cricket-background">
+    <div class="stadium-overlay"></div>
+    
+    <header class="glass">
+      <nav class="navbar">
+        <div class="logo">🏏 CricketZone</div>
+        <ul class="nav-links">
+          <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="/schedule"><i class="fas fa-calendar-alt"></i> Schedule</a></li>
+          <li><a href="/live"><i class="fas fa-tv"></i> Live Scores</a></li>
+          <li><a href="/teams" class="active"><i class="fas fa-users"></i> Teams</a></li>
+          <li><a href="/contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+        <div class="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="teams-container glass">
+        <div class="teams-header">
+          <h1><i class="fas fa-trophy"></i> IPL 2025 Teams</h1>
+          <p>Meet the franchises competing in this year's tournament</p>
+          <div class="filter-controls">
+            <button class="filter-btn active" data-filter="all">All Teams</button>
+            <button class="filter-btn" data-filter="north">North</button>
+            <button class="filter-btn" data-filter="south">South</button>
+            <button class="filter-btn" data-filter="east">East</button>
+            <button class="filter-btn" data-filter="west">West</button>
+          </div>
+        </div>
+        
+        <div class="teams-grid">
+          <!-- Team cards will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/teams/teams.js" defer></script>
+</body>
+</html>
