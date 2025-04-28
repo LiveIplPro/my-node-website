@@ -21,20 +21,40 @@
   <meta name="twitter:description" content="Live scores, stats, match schedule and more from IPL 2025.">
   <meta name="twitter:image" content="https://i.imgur.com/mVMNx6m.jpeg">
 
-  <!-- Security -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://pagead2.googlesyndication.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com; img-src 'self' https://i.imgur.com">
+  <!-- Enhanced CSP Policy -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://cdnjs.cloudflare.com https://pagead2.googlesyndication.com 'unsafe-inline';
+    style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline';
+    font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+    img-src 'self' https://i.imgur.com data:;
+    connect-src 'self' https://my-node-website.onrender.com;
+    frame-src 'self' https://www.youtube.com;
+  ">
 
   <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-  <!-- Preload Banner -->
+  <!-- Preload Resources -->
   <link rel="preload" as="image" href="https://i.imgur.com/mVMNx6m.jpeg">
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" 
+        integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" 
+        crossorigin="anonymous" 
+        referrerpolicy="no-referrer">
+
+  <!-- Fallback for Font Awesome -->
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  </noscript>
 
   <!-- Styles -->
   <link rel="stylesheet" href="style.css">
@@ -63,7 +83,7 @@
       </div>
       <ul class="nav-links">
         <li><a href="#live-matches"><i class="fas fa-bolt"></i> Live</a></li>
-        <li><a href="#schedule"><i class="fas fa-calendar"></i> Schedule</a></li>
+        <li><a href="#schedule"><i class="fas fa-calendar-alt"></i> Schedule</a></li>
         <li><a href="#teams"><i class="fas fa-users"></i> Teams</a></li>
         <li><a href="#stats"><i class="fas fa-chart-bar"></i> Stats</a></li>
       </ul>
@@ -81,8 +101,16 @@
   <main class="container">
     <section class="hero glass">
       <div class="hero-content">
-        <h1>IPL 2025 Season</h1>
-        <p>Experience cricket like never before with real-time updates, stats, and exclusive content</p> 
+        <h1><i class="fas fa-trophy"></i> IPL 2025 Season</h1>
+        <p>Experience cricket like never before with real-time updates, stats, and exclusive content</p>
+        <div class="hero-buttons">
+          <a href="#live-matches" class="btn-primary">
+           
+          </a>
+          <a href="#schedule" class="btn-secondary">
+            
+          </a>
+        </div>
       </div>
       <div class="hero-image">
         <img src="https://i.imgur.com/mVMNx6m.jpeg" alt="IPL 2025 Trophy" class="floating" loading="lazy">
@@ -92,46 +120,60 @@
 
     <section class="glass" id="live-matches">
       <div class="section-header">
-        <h2><i class="fas fa-broadcast-tower"></i> Live Match</h2>
+        <h2><i class="fas fa-broadcast-tower"></i> Live Matches</h2>
+        <div class="live-indicator">
+          <span class="live-pulse"></span>
+          
+        </div>
       </div>
       <div id="liveSchedule" class="matches-container">
-        <!-- Match cards will be dynamically injected here by JS -->
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i> Loading live matches...
+        </div>
       </div>
     </section>
 
-    <div class="stream-btn-container glass">
-  <a href="/live" id="streamBtn" class="animated-btn" aria-label="Watch live streaming">
-    <span class="btn-text">Watch Live Streaming</span>
-    <span class="btn-icon">
-      <i class="fas fa-tv"></i>
-      <span class="live-pulse"></span>
-    </span>
-    <span class="btn-cricket-ball"></span>
-    <span class="btn-stars"></span>
-    <span class="btn-wave"></span>
-  </a>
-</div>
+    <div class="cta-buttons">
+      <div class="stream-btn-container glass">
+        <button id="streamBtn" class="animated-btn" aria-label="Watch live streaming">
+          <span class="btn-text">Watch Live Streaming</span>
+          <span class="btn-icon">
+            <i class="fas fa-tv"></i>
+            <span class="live-pulse"></span>
+          </span>
+          <span class="btn-cricket-ball"></span>
+          <span class="btn-stars"></span>
+          <span class="btn-wave"></span>
+        </button>
+      </div>
 
-<div class="animated-btn-container glass">
-  <a href="/schedule" id="scheduleBtn" class="animated-btn" aria-label="view full schedule">
-    <span class="btn-text">View Full Schedule</span>
-    <span class="btn-icon">
-      <i class="fas fa-calendar-alt"></i>
-    </span>
-    <span class="btn-cricket-ball"></span>
-    <span class="btn-stars"></span>
-    <span class="btn-wave"></span>
-  </a>
-</div>
+      <div class="animated-btn-container glass">
+        <button id="scheduleBtn" class="animated-btn" aria-label="View full schedule">
+          <span class="btn-text">View Full Schedule</span>
+          <span class="btn-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </span>
+          <span class="btn-cricket-ball"></span>
+          <span class="btn-stars"></span>
+          <span class="btn-wave"></span>
+        </button>
+      </div>
+    </div>
 
     <section id="teams" class="glass">
       <div class="section-header">
         <h2><i class="fas fa-users"></i> Team Profiles</h2>
+        <a href="#teams" class="view-all">
+          
+        </a>
       </div>
       <div class="teams-grid" id="teamsGrid">
-        <!-- Populated via JavaScript -->
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i> Loading teams...
+        </div>
       </div>
     </section>
+
   </main>
 
   <div id="teamModal" class="modal">
@@ -165,6 +207,7 @@
           </div>
         </div>
         <div class="team-description">
+          <h3><i class="fas fa-info-circle"></i> About</h3>
           <p id="modalTeamDescription"></p>
         </div>
       </div>
@@ -182,7 +225,6 @@
         <ul>
           <li><a href="/">Home</a></li>
           <li><a href="/schedule">Schedule</a></li>
-         
           <li><a href="/teams">Teams</a></li>
           <li><a href="/contact">Contact</a></li>
         </ul>
