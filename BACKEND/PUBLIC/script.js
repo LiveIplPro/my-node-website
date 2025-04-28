@@ -55,6 +55,10 @@ function handleScheduleButtonClick() {
   window.location.href = '/schedule/index.html';
 }
 
+function handlestreamingButtonClick() {
+  window.location.href = '/live/index.html';
+}
+
 // Fetch data from API with error handling
 async function fetchData(url) {
   try {
