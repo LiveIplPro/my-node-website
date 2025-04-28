@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact - CricketZone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/contact/contact.css">
+</head>
+<body>
+  <div class="cricket-background">
+    <div class="stadium-overlay"></div>
+    
+    <header class="glass">
+      <nav class="navbar">
+        <div class="logo">🏏 CricketZone</div>
+        <ul class="nav-links">
+          <li class="active"><i class="fas fa-envelope"></i> Contact</li>
+
+        </ul>
+        <div class="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="contact-card glass">
+        <div class="contact-header">
+          <h1>Get In Touch</h1>
+          <p>We're here to help and answer any questions you might have</p>
+        </div>
+        
+        <div class="contact-body">
+          <form id="contact-form" class="contact-form">
+            <div class="form-group floating">
+              <input type="text" id="name" name="name" required placeholder=" ">
+              <label for="name">Full Name</label>
+              <i class="fas fa-user"></i>
+            </div>
+            
+            <div class="form-group floating">
+              <input type="email" id="email" name="email" required placeholder=" ">
+              <label for="email">Email Address</label>
+              <i class="fas fa-envelope"></i>
+            </div>
+            
+            <div class="form-group floating">
+              <textarea id="message" name="message" rows="3" required placeholder=" "></textarea>
+              <label for="message">Your Message</label>
+              <i class="fas fa-comment"></i>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+              <span>Send Message</span>
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+          
+          <div class="contact-info">
+            <div class="info-card">
+              <div class="info-icon">
+                <i class="fas fa-envelope-open-text"></i>
+              </div>
+              <h3>Email Us</h3>
+              <p>support@cricketz.one</p>
+            </div>
+            
+            <div class="info-card">
+              <div class="info-icon">
+                <i class="fas fa-phone-alt"></i>
+              </div>
+              <h3>Call Us</h3>
+              <p>+1 (555) 123-4567</p>
+            </div>
+            
+            <div class="info-card">
+              <div class="info-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <h3>Visit Us</h3>
+              <p>Stadium Road, Cricket Town</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/contact/contact.js" defer></script>
+</body>
+</html>
