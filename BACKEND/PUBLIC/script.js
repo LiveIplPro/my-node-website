@@ -50,10 +50,6 @@ function toggleTheme() {
   localStorage.setItem('theme', newTheme);
 }
 
-// Button event handlers
-function handleStreamButtonClick() {
-  alert('Live streaming will start soon!');
-}
 
 function handleScheduleButtonClick() {
   window.location.href = '/schedule/index.html';
