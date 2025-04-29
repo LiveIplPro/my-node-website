@@ -85,7 +85,7 @@ function toggleTheme() {
 
 // Button event handlers
 function handleStreamButtonClick() {
-  alert('Live streaming will start soon!');
+window.location.href = '/live/index.html';
 }
 
 function handleScheduleButtonClick() {
