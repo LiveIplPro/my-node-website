@@ -10,6 +10,9 @@ const modal = document.getElementById('teamModal');
 const modalContent = document.querySelector('.modal-content') || modal;
 const streamBtn = document.getElementById('streamBtn');
 const scheduleBtn = document.getElementById('scheduleBtn');
+const loader = document.getElementById('loader');
+const liveMatchesLastUpdated = document.getElementById('liveMatchesLastUpdated');
+const teamsLastUpdated = document.getElementById('teamsLastUpdated');
 
 // API Configuration
 const API_BASE_URL = 'https://my-node-website.onrender.com';
@@ -33,6 +36,22 @@ const TEAM_LOGOS = {
   "Royal Challengers Bengaluru": "https://i.imgur.com/e51T5so.jpeg",
   "Sunrisers Hyderabad": "https://i.imgur.com/CyxeuGq.jpeg"
 };
+
+// Show loader
+function showLoader() {
+  loader.style.display = 'flex';
+}
+
+// Hide loader
+function hideLoader() {
+  loader.style.display = 'none';
+}
+
+// Update last updated time
+function updateLastUpdated(element) {
+  const now = new Date();
+  element.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+}
 
 // Font Awesome Load Check
 function checkFontAwesomeLoaded() {
@@ -59,8 +78,8 @@ function toggleTheme() {
   const newTheme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.body.setAttribute('data-theme', newTheme);
   const icon = themeToggle.querySelector('i');
-  icon.classList.toggle('fa-moon');
-  icon.classList.toggle('fa-sun');
+  icon.classList.toggle('fa-moon', savedTheme === 'light');
+  icon.classList.toggle('fa-sun', savedTheme === 'dark');
   localStorage.setItem('theme', newTheme);
 }
 
@@ -76,6 +95,8 @@ function handleScheduleButtonClick() {
 // Fetch data from API with error handling
 async function fetchData(url) {
   try {
+    showLoader();
+    
     if (url === ENDPOINTS.LIVE_MATCHES && liveSchedule) {
       liveSchedule.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading live matches...</div>';
     }
@@ -91,11 +112,15 @@ async function fetchData(url) {
 
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    const data = await response.json();
+    
+    return data;
   } catch (error) {
     console.error('Error fetching data:', error);
     showError(url);
     return null;
+  } finally {
+    hideLoader();
   }
 }
 
@@ -206,7 +231,10 @@ async function fetchAndRenderLiveMatches() {
       </div>
     </div>
   `).join('');
+
+  updateLastUpdated(liveMatchesLastUpdated);
 }
+
 // Fetch & render teams
 async function fetchAndRenderTeams() {
   const data = await fetchData(ENDPOINTS.TEAMS);
@@ -233,6 +261,8 @@ async function fetchAndRenderTeams() {
     const team = teams.find(t => t.name === teamName);
     teamCard.addEventListener('click', () => showTeamDetails(team));
   });
+
+  updateLastUpdated(teamsLastUpdated);
 }
 
 // Show team modal
