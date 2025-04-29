@@ -143,7 +143,10 @@ app.get('/api/teams', (req, res) => {
 });
 
 // API key rotation + caching
-const matchCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
+const matchCache = new NodeCache({ 
+  stdTTL: 300, // 5 minutes cache
+  checkperiod: 60 // check every minute for expired items
+});
 const apiKeys = process.env.API_KEYS?.split(",").map(k => k.trim()).filter(Boolean) || [];
 
 if (apiKeys.length === 0) {
@@ -166,7 +169,10 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
     const cacheKey = `${cacheTag}_${apiKey}`;
     const cached = matchCache.get(cacheKey);
 
-    if (cached) return cached;
+    if (cached) {
+      console.log(`📦 Using cached data for ${cacheTag}`);
+      return cached;
+    }
 
     try {
       console.log(`🔑 Trying API key: ****${apiKey.slice(-4)}`);
@@ -175,6 +181,7 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
 
       if (!response.ok || data.status === "error") {
         if (data.message?.toLowerCase().includes("limit")) {
+          console.warn(`⚠️ Rate limit exceeded for key ****${apiKey.slice(-4)}`);
           keyStatus[currentKeyIndex].available = false;
           keyStatus[currentKeyIndex].lastUsed = new Date();
           throw new Error(`Limit exceeded for key ****${apiKey.slice(-4)}`);
@@ -184,17 +191,20 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
 
       matchCache.set(cacheKey, data);
       keyStatus[currentKeyIndex].lastUsed = new Date();
+      console.log(`✅ Success with key ****${apiKey.slice(-4)}`);
       return data;
     } catch (err) {
       console.warn(`⚠️ Key ****${apiKey.slice(-4)} failed: ${err.message}`);
       currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
       attempts++;
 
+      // Reset keys if they've been unavailable for more than 1 hour
       if (attempts % apiKeys.length === 0) {
         const now = new Date();
         keyStatus.forEach(status => {
           if (!status.available && now - new Date(status.lastUsed) > 3600000) {
             status.available = true;
+            console.log(`♻️ Resetting key ****${status.key.slice(-4)}`);
           }
         });
       }
@@ -203,6 +213,7 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
     }
   }
 
+  console.error("❌ All API keys failed or exhausted");
   throw new Error("All API keys failed or exhausted.");
 }
 
@@ -215,6 +226,7 @@ app.get("/api/currentMatches", apiLimiter, async (req, res) => {
     );
     res.json(data);
   } catch (error) {
+    console.error("Error in /api/currentMatches:", error.message);
     res.status(500).json({ status: "error", message: error.message });
   }
 });
@@ -228,6 +240,7 @@ app.get("/api/matchStats/:matchId", apiLimiter, async (req, res) => {
     );
     res.json(data);
   } catch (error) {
+    console.error(`Error in /api/matchStats/${req.params.matchId}:`, error.message);
     res.status(500).json({ status: "error", message: error.message });
   }
 });
@@ -241,6 +254,7 @@ app.get("/api/playerStats/:playerId", apiLimiter, async (req, res) => {
     );
     res.json(data);
   } catch (error) {
+    console.error(`Error in /api/playerStats/${req.params.playerId}:`, error.message);
     res.status(500).json({ status: "error", message: error.message });
   }
 });
@@ -253,6 +267,7 @@ app.post("/api/predict", apiLimiter, async (req, res) => {
     const confidence = Math.random().toFixed(2);
     res.json({ prediction, confidence });
   } catch (error) {
+    console.error("Error in /api/predict:", error.message);
     res.status(500).json({ status: "error", message: error.message });
   }
 });
