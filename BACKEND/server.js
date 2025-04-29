@@ -6,7 +6,6 @@ const NodeCache = require("node-cache");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 
-// Initialize express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 const RETRY_DELAY = parseInt(process.env.RETRY_DELAY_MS) || 500;
@@ -15,27 +14,14 @@ const RETRY_DELAY = parseInt(process.env.RETRY_DELAY_MS) || 500;
 app.use(cors());
 app.use(express.json());
 
-// Basic logging middleware (replacing morgan)
+// Logging middleware
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
-// Serve static files from BACKEND/PUBLIC
-app.use(express.static(path.join(__dirname, 'PUBLIC')));
 
-// Optional: Home route (if you want root redirect)
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'PUBLIC', 'index.html'));
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-// Static files serving
+// Serve static files
 const publicRoot = path.join(__dirname, 'PUBLIC');
-console.log(`Serving static files from: ${publicRoot}`);
 app.use(express.static(publicRoot));
 app.use('/ads.txt', express.static(path.join(__dirname, 'ads.txt')));
 app.use('/robots.txt', express.static(path.join(__dirname, 'robots.txt')));
@@ -48,8 +34,7 @@ const apiLimiter = rateLimit({
   message: "Too many requests, please try again later."
 });
 
-
-// Teams डेटा के लिए API रूट
+// Teams API
 app.get('/api/teams', (req, res) => {
   const teamsData = [
     {
@@ -157,26 +142,20 @@ app.get('/api/teams', (req, res) => {
   res.json(teamsData);
 });
 
-// Cache
+// API key rotation + caching
 const matchCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
+const apiKeys = process.env.API_KEYS?.split(",").map(k => k.trim()).filter(Boolean) || [];
 
-// Load API Keys
-const apiKeys = process.env.API_KEYS?.split(",").map(key => key.trim()).filter(Boolean) || [];
 if (apiKeys.length === 0) {
   console.error("❌ No API keys found. Please add API_KEYS in your .env file.");
   process.exit(1);
 }
 
 let currentKeyIndex = 0;
-let keyStatus = apiKeys.map(key => ({
-  key,
-  available: true,
-  lastUsed: null
-}));
+let keyStatus = apiKeys.map(key => ({ key, available: true, lastUsed: null }));
 
 console.log("✅ Loaded API Keys:", apiKeys.map(k => `****${k.slice(-4)}`).join(", "));
 
-// API Key Rotation with Cache
 async function fetchWithRotation(urlGenerator, cacheTag) {
   let attempts = 0;
   const maxAttempts = apiKeys.length * 2;
@@ -266,6 +245,7 @@ app.get("/api/playerStats/:playerId", apiLimiter, async (req, res) => {
   }
 });
 
+// Match prediction dummy endpoint
 app.post("/api/predict", apiLimiter, async (req, res) => {
   try {
     const { team1, team2 } = req.body;
@@ -282,7 +262,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// SPA routes - should come after static files serving
+// SPA Routes
 app.get(['/', '/live', '/schedule', '/predictions'], (req, res) => {
   res.sendFile(path.join(publicRoot, 'index.html'), (err) => {
     if (err) {
@@ -297,5 +277,3 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`Static files being served from: ${publicRoot}`);
 });
-
-
