@@ -6,19 +6,6 @@ const NodeCache = require("node-cache");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 
-// Serve static files from BACKEND/PUBLIC
-app.use(express.static(path.join(__dirname, 'PUBLIC')));
-
-// Optional: Home route (if you want root redirect)
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'PUBLIC', 'index.html'));
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
 // Initialize express app
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +19,18 @@ app.use(express.json());
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
+});
+// Serve static files from BACKEND/PUBLIC
+app.use(express.static(path.join(__dirname, 'PUBLIC')));
+
+// Optional: Home route (if you want root redirect)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'PUBLIC', 'index.html'));
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 // Static files serving
