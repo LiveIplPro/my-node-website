@@ -1,3 +1,4 @@
+
 // DOM Elements
 const mobileMenuBtn = document.querySelector('.mobile-menu');
 const navLinks = document.querySelector('.nav-links');
@@ -235,6 +236,100 @@ async function fetchAndRenderLiveMatches() {
   updateLastUpdated(liveMatchesLastUpdated);
 }
 
+// Add this to your existing script.js
+document.addEventListener('DOMContentLoaded', function() {
+  // Animate footer elements on scroll
+  const footerCols = document.querySelectorAll('.footer-col');
+  
+  const footerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animationPlayState = 'running';
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  footerCols.forEach(col => {
+    footerObserver.observe(col);
+  });
+  
+  // Social media icon hover effects
+  const socialIcons = document.querySelectorAll('.social-icon');
+  socialIcons.forEach(icon => {
+    icon.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-5px) rotate(10deg)';
+    });
+    
+    icon.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0) rotate(0deg)';
+    });
+  });
+  
+  // Menu item hover effects
+  const menuItems = document.querySelectorAll('.footer-menu li');
+  menuItems.forEach(item => {
+    item.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateX(5px)';
+    });
+    
+    item.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateX(0)';
+    });
+  });
+});
+  
+  // Animate footer elements on scroll
+  const footerElements = document.querySelectorAll('.footer-col, .footer-title, .footer-menu li');
+  
+  const footerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in');
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  footerElements.forEach(el => {
+    footerObserver.observe(el);
+  });
+
+
+function showNewsletterError(message) {
+  const form = document.getElementById('subscribe-form');
+  let errorElement = form.querySelector('.error-message');
+  
+  if (!errorElement) {
+    errorElement = document.createElement('div');
+    errorElement.className = 'error-message';
+    form.appendChild(errorElement);
+  }
+  
+  errorElement.textContent = message;
+  errorElement.style.display = 'block';
+  
+  setTimeout(() => {
+    errorElement.style.display = 'none';
+  }, 3000);
+}
+
+function showNewsletterSuccess(message) {
+  const form = document.getElementById('subscribe-form');
+  let successElement = form.querySelector('.success-message');
+  
+  if (!successElement) {
+    successElement = document.createElement('div');
+    successElement.className = 'success-message';
+    form.appendChild(successElement);
+  }
+  
+  successElement.textContent = message;
+  successElement.style.display = 'block';
+  
+  setTimeout(() => {
+    successElement.style.display = 'none';
+  }, 3000);
+}
+
 // Fetch & render teams
 async function fetchAndRenderTeams() {
   const data = await fetchData(ENDPOINTS.TEAMS);
@@ -348,6 +443,104 @@ async function fetchAndRenderPointsTable() {
     </div>
   `;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Update copyright year
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+  
+  // Add animation classes
+  const footerSections = document.querySelectorAll('.footer-brand, .footer-section');
+  footerSections.forEach((section, index) => {
+    section.classList.add('animate-footer', `delay-${index}`);
+  });
+  
+  // Interactive checkboxes
+  const checkboxes = document.querySelectorAll('.checkbox');
+  checkboxes.forEach(box => {
+    box.addEventListener('click', () => {
+      box.textContent = box.textContent === '[ ]' ? '[x]' : '[ ]';
+    });
+  });
+  
+  // Smooth scroll to top
+  const topLink = document.querySelector('.top-link');
+  if (topLink) {
+    topLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+  
+  // Add hover effect to logo
+  const logo = document.querySelector('.logo-circle');
+  if (logo) {
+    logo.addEventListener('mouseenter', () => {
+      logo.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+    });
+    logo.addEventListener('mouseleave', () => {
+      logo.style.boxShadow = 'none';
+    });
+  }
+  
+  // Parallax effect for background
+  window.addEventListener('scroll', () => {
+    const footer = document.querySelector('.minimal-footer');
+    const scrollPosition = window.pageYOffset;
+    footer.style.backgroundPositionY = scrollPosition * 0.5 + 'px';
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Update copyright year
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+  
+  // Add animation classes
+  const footerSections = document.querySelectorAll('.footer-brand, .footer-section');
+  footerSections.forEach((section, index) => {
+    section.classList.add('animate-footer', `delay-${index}`);
+  });
+  
+  // Interactive checkboxes
+  const checkboxes = document.querySelectorAll('.checkbox');
+  checkboxes.forEach(box => {
+    box.addEventListener('click', () => {
+      box.textContent = box.textContent === '[ ]' ? '[x]' : '[ ]';
+    });
+  });
+  
+  // Smooth scroll to top
+  const topLink = document.querySelector('.top-link');
+  if (topLink) {
+    topLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+  
+  // Add hover effect to logo
+  const logo = document.querySelector('.logo-circle');
+  if (logo) {
+    logo.addEventListener('mouseenter', () => {
+      logo.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+    });
+    logo.addEventListener('mouseleave', () => {
+      logo.style.boxShadow = 'none';
+    });
+  }
+  
+  // Parallax effect for background
+  window.addEventListener('scroll', () => {
+    const footer = document.querySelector('.minimal-footer');
+    const scrollPosition = window.pageYOffset;
+    footer.style.backgroundPositionY = scrollPosition * 0.5 + 'px';
+  });
+});
 
 // Init App
 async function init() {
