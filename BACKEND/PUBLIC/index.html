@@ -1,4 +1,6 @@
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,13 +75,18 @@
   <title>IPL 2025 - Premium Experience</title>
 </head>
 <body>
-  <!-- Loader -->
+
+
+<!-- Loader -->
   <div id="loader" class="loader">
     <div class="loader-content">
-      <i class="fas fa-spinner fa-spin"></i>
+      <div class="loader-spinner">
+        <div class="cricket-ball"></div>
+      </div>
       <span>Loading IPL 2025 Data...</span>
     </div>
   </div>
+
 
   <div class="animated-bg"></div>
   <div class="particles"></div>
@@ -225,55 +232,67 @@
     </div>
   </div>
 
-  <footer class="footer">
-  <div class="footer-container">
+  <footer class="minimal-footer">
+    <div class="footer-background"></div>
     
-    <!-- Left: About -->
-    <div class="footer-about">
-      <h2>CricketZone</h2>
-      <p>Your ultimate cricket destination for live scores, match updates, and more.</p>
-    </div>
-    
-    <!-- Center: Quick Links -->
-    <div class="footer-links">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/schedule">Schedule</a></li>
-        <li><a href="/teams">Teams</a></li>
-        <li><a href="/contact">Contact</a></li>
-      </ul>
-    </div>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="logo-container">
+          <div class="logo-circle">
+            <span>MK</span>
+          </div>
+        </div>
+        <h3>MR.KARTIK</h3>
+        <p class="profession">Web Designer</p>
+        <div class="footer-description">
+          <p>Creating visual experiences that communicate and inspire.</p>
+        </div>
+      </div>
 
-    <!-- Right: Extra Links (xxxx links) -->
-    <div class="footer-links">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="/about">About Us</a></li>
-        <li><a href="/privacy-policy/index.html">Privacy Policy</a></li>
-        <li><a href="/disclaimer">Disclaimer</a></li>
-        <li><a href="/articles/ best-captains/index.html">Articles 1 </a></li>
-        <li><a href="/articles/young-talents/index.html">Articles 2 </a></li>
-      </ul>
-    </div>
+      <div class="footer-sections">
+        <div class="footer-section">
+          <h4 class="section-title"><span class="checkbox">[ ]</span> Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="/"><i class="fas fa-home icon"></i> Home</a></li>
+            <li><a href="/schedule"><i class="fas fa-calendar-alt icon"></i> schedule</a></li>
+            <li><a href="/team"><i class="fas fa-users icon"></i> Team</a></li>
+            <li><a href="/blog"><i class="fas fa-pen icon"></i> Blog</a></li>
+          </ul>
+        </div>
 
-    <!-- Subscribe Section -->
-    <div class="footer-subscribe">
-      <h3>Stay Updated</h3>
-      <form id="subscribe-form">
-        <input type="email" placeholder="Enter your email" required>
-        <button type="submit">Subscribe</button>
-      </form>
-      <div class="social-icons">
-        <a href="https://www.facebook.com/share/12LB3SLs5m2/"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://www.instagram.com/champu_don_420?igsh=dnhxcXVqMXRqY3kz"><i class="fab fa-instagram"></i></a>
-        <a href="https://www.youtube.com/@Festivalseason001"><i class="fab fa-youtube"></i></a>
+        <div class="footer-section">
+          <h4 class="section-title"><span class="checkbox">[ ]</span> Connect</h4>
+          <ul class="footer-links">
+            <li><a href="/contact"><i class="fas fa-phone icon"></i> Contact</a></li>
+            <li><a href="/about"><i class="fas fa-info-circle icon"></i> About</a></li>
+            <li><a href="/disclaimer"><i class="fas fa-exclamation-triangle icon"></i> Disclaimer</a></li>
+			<li><a href="/privacy-policy/index.html"><i class="fas fa-user-shield icon"></i> Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="section-title"><span class="checkbox">[2]</span> Location</h4>
+          <address>
+            <i class="fas fa-map-marker-alt icon"></i>Manek Chowk, Gandhi Rd, Danapidth, Khadia,<br>
+            Ahmedabad, Gujarat 380001
+          </address>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Facebook" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="youtube" class="social-icon"><i class="fab fa-youtube-p"></i></a>
+          </div>
+        </div>
       </div>
     </div>
 
-  </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="current-year"></span> MR.KARTIK. All Rights Reserved.</p>
+      <div class="back-to-top">
+        <a href="#top" class="top-link"><i class="fas fa-arrow-up"></i></a>
+      </div>
+    </div>
+  </footer>
 
-  <div class="footer-bottom">
-    <p>© 2025 CricketZone. All rights reserved.</p>
-  </div>
-</footer>
+  <script src="footer.js"></script>
+</body>
+</html>
