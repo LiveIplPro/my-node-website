@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
       image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       date: "May 15, 2023",
       readTime: "5 min read",
-      path: "article/best-captains/index.html"
+      path: "articles/best-captains/index.html"
+      
     },
     {
       id: 2,
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
       image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       date: "June 2, 2023",
       readTime: "7 min read",
-      path: "article/young-talents/index.html"
+      path: "articles/young-talents/index.html"
     },
     // {
     //   id: 3,
