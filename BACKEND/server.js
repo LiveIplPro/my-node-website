@@ -37,108 +37,8 @@ const apiLimiter = rateLimit({
 // Teams API
 app.get('/api/teams', (req, res) => {
   const teamsData = [
-    {
-      name: "Chennai Super Kings",
-      captain: "MS Dhoni",
-      logo: "https://i.imgur.com/LsT0VWz.jpeg",
-      trophies: 5,
-      matches: 210,
-      wins: 130,
-      losses: 80,
-      description: "Chennai Super Kings is one of the most consistent and successful teams in IPL history."
-    },
-    {
-      name: "Delhi Capitals",
-      captain: "Axar Patel",
-      logo: "https://i.imgur.com/B53ByLk.jpeg",
-      trophies: 0,
-      matches: 216,
-      wins: 102,
-      losses: 114,
-      description: "Delhi Capitals has transformed into a competitive unit with a young and fearless core."
-    },
-    {
-      name: "Gujarat Titans",
-      captain: "Shubman Gill",
-      logo: "https://i.imgur.com/j2rnJko.jpeg",
-      trophies: 1,
-      matches: 32,
-      wins: 22,
-      losses: 10,
-      description: "Gujarat Titans made a dream debut in 2022 by winning the title and remain strong contenders."
-    },
-    {
-      name: "Kolkata Knight Riders",
-      captain: "Ajinkya Rahane",
-      logo: "https://i.imgur.com/vh6Kf1N.jpeg",
-      trophies: 2,
-      matches: 224,
-      wins: 115,
-      losses: 109,
-      description: "KKR has a rich history with two titles and strong performances under pressure."
-    },
-    {
-      name: "Lucknow Super Giants",
-      captain: "Rishabh Pant",
-      logo: "https://i.imgur.com/XZbFpTw.jpeg",
-      trophies: 0,
-      matches: 30,
-      wins: 18,
-      losses: 12,
-      description: "Lucknow Super Giants have impressed with their balanced squad and consistent playoff runs."
-    },
-    {
-      name: "Mumbai Indians",
-      captain: "Hardik Pandya",
-      logo: "https://i.imgur.com/R1m23jr.jpeg",
-      trophies: 5,
-      matches: 231,
-      wins: 129,
-      losses: 98,
-      description: "Mumbai Indians has a legacy of dominance and is the most successful team in IPL history."
-    },
-    {
-      name: "Punjab Kings",
-      captain: "Shreyas Iyer",
-      logo: "https://i.imgur.com/BwTipSE.jpeg",
-      trophies: 0,
-      matches: 218,
-      wins: 98,
-      losses: 120,
-      description: "Punjab Kings have a strong squad but are still chasing their first IPL title."
-    },
-    {
-      name: "Rajasthan Royals",
-      captain: "Sanju Samson",
-      logo: "https://i.imgur.com/wiUl1x1.jpeg",
-      trophies: 1,
-      matches: 194,
-      wins: 98,
-      losses: 96,
-      description: "Winners of the inaugural IPL, RR is known for nurturing young talent and competitive spirit."
-    },
-    {
-      name: "Royal Challengers Bengaluru",
-      captain: "Rajat Patidar",
-      logo: "https://i.imgur.com/e51T5so.jpeg",
-      trophies: 0,
-      matches: 227,
-      wins: 107,
-      losses: 120,
-      description: "RCB is known for its passionate fan base and high-profile players, always strong contenders."
-    },
-    {
-      name: "Sunrisers Hyderabad",
-      captain: "Pat Cummins",
-      logo: "https://i.imgur.com/CyxeuGq.jpeg",
-      trophies: 1,
-      matches: 177,
-      wins: 90,
-      losses: 87,
-      description: "Sunrisers Hyderabad won the IPL in 2016 and are known for their strong bowling attack."
-    }
+    // ... (keep your existing teams data)
   ];
-
   res.json(teamsData);
 });
 
@@ -147,6 +47,31 @@ const matchCache = new NodeCache({
   stdTTL: 300, // 5 minutes cache
   checkperiod: 60 // check every minute for expired items
 });
+
+// Multiple API endpoints configuration
+const API_ENDPOINTS = [
+  {
+    name: "currentMatches",
+    url: (key) => `https://api.cricapi.com/v1/currentMatches?apikey=${key}&offset=0`
+  },
+  {
+    name: "cricScore",
+    url: (key) => `https://api.cricapi.com/v1/cricScore?apikey=${key}`
+  },
+  {
+    name: "series",
+    url: (key) => `https://api.cricapi.com/v1/series?apikey=${key}&offset=0`
+  },
+  {
+    name: "matches",
+    url: (key) => `https://api.cricapi.com/v1/matches?apikey=${key}&offset=0`
+  },
+  {
+    name: "players",
+    url: (key) => `https://api.cricapi.com/v1/players?apikey=${key}&offset=0`
+  }
+];
+
 const apiKeys = process.env.API_KEYS?.split(",").map(k => k.trim()).filter(Boolean) || [];
 
 if (apiKeys.length === 0) {
@@ -155,17 +80,18 @@ if (apiKeys.length === 0) {
 }
 
 let currentKeyIndex = 0;
-let keyStatus = apiKeys.map(key => ({ key, available: true, lastUsed: null }));
+let keyStatus = apiKeys.map(key => ({ key, available: true, lastUsed: null, callCount: 0 }));
 
 console.log("✅ Loaded API Keys:", apiKeys.map(k => `****${k.slice(-4)}`).join(", "));
 
-async function fetchWithRotation(urlGenerator, cacheTag) {
+async function fetchWithRotation(endpointName, cacheTag) {
   let attempts = 0;
   const maxAttempts = apiKeys.length * 2;
+  const endpoint = API_ENDPOINTS.find(e => e.name === endpointName);
 
   while (attempts < maxAttempts) {
     const { key: apiKey } = keyStatus[currentKeyIndex];
-    const url = urlGenerator(apiKey);
+    const url = endpoint.url(apiKey);
     const cacheKey = `${cacheTag}_${apiKey}`;
     const cached = matchCache.get(cacheKey);
 
@@ -175,7 +101,7 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
     }
 
     try {
-      console.log(`🔑 Trying API key: ****${apiKey.slice(-4)}`);
+      console.log(`🔑 Trying API key: ****${apiKey.slice(-4)} for ${endpointName}`);
       const response = await fetch(url);
       const data = await response.json();
 
@@ -187,6 +113,14 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
           throw new Error(`Limit exceeded for key ****${apiKey.slice(-4)}`);
         }
         throw new Error(data.message || "API Error");
+      }
+
+      // Increment call count and rotate if needed
+      keyStatus[currentKeyIndex].callCount++;
+      if (keyStatus[currentKeyIndex].callCount >= 100) {
+        console.log(`🔄 Rotating API key after 100 calls: ****${apiKey.slice(-4)}`);
+        keyStatus[currentKeyIndex].callCount = 0;
+        currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
       }
 
       matchCache.set(cacheKey, data);
@@ -220,10 +154,7 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
 // API Routes
 app.get("/api/liveScores", apiLimiter, async (req, res) => {
   try {
-    const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/cricScore?apikey=${key}`,
-      "liveScores"
-    );
+    const data = await fetchWithRotation("cricScore", "liveScores");
     res.json(data);
   } catch (error) {
     console.error("Error in /api/liveScores:", error.message);
@@ -233,10 +164,7 @@ app.get("/api/liveScores", apiLimiter, async (req, res) => {
 
 app.get("/api/currentMatches", apiLimiter, async (req, res) => {
   try {
-    const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/currentMatches?apikey=${key}&offset=0`,
-      "currentMatches"
-    );
+    const data = await fetchWithRotation("currentMatches", "currentMatches");
     res.json(data);
   } catch (error) {
     console.error("Error in /api/currentMatches:", error.message);
@@ -244,50 +172,19 @@ app.get("/api/currentMatches", apiLimiter, async (req, res) => {
   }
 });
 
-app.get("/api/matchStats/:matchId", apiLimiter, async (req, res) => {
-  try {
-    const { matchId } = req.params;
-    const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/match_info?apikey=${key}&id=${matchId}`,
-      `matchStats_${matchId}`
-    );
-    res.json(data);
-  } catch (error) {
-    console.error(`Error in /api/matchStats/${req.params.matchId}:`, error.message);
-    res.status(500).json({ status: "error", message: error.message });
-  }
-});
-
-app.get("/api/playerStats/:playerId", apiLimiter, async (req, res) => {
-  try {
-    const { playerId } = req.params;
-    const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/players_info?apikey=${key}&id=${playerId}`,
-      `playerStats_${playerId}`
-    );
-    res.json(data);
-  } catch (error) {
-    console.error(`Error in /api/playerStats/${req.params.playerId}:`, error.message);
-    res.status(500).json({ status: "error", message: error.message });
-  }
-});
-
-// Match prediction dummy endpoint
-app.post("/api/predict", apiLimiter, async (req, res) => {
-  try {
-    const { team1, team2 } = req.body;
-    const prediction = Math.random() > 0.5 ? team1 : team2;
-    const confidence = Math.random().toFixed(2);
-    res.json({ prediction, confidence });
-  } catch (error) {
-    console.error("Error in /api/predict:", error.message);
-    res.status(500).json({ status: "error", message: error.message });
-  }
-});
+// ... (keep your other existing routes)
 
 // Health Check
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+  res.json({ 
+    status: "ok", 
+    timestamp: new Date().toISOString(),
+    apiKeys: keyStatus.map(k => ({
+      key: `****${k.key.slice(-4)}`,
+      available: k.available,
+      callCount: k.callCount
+    }))
+  });
 });
 
 // SPA Routes
