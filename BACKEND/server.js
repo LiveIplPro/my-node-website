@@ -218,6 +218,19 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
 }
 
 // API Routes
+app.get("/api/liveScores", apiLimiter, async (req, res) => {
+  try {
+    const data = await fetchWithRotation(
+      (key) => `https://api.cricapi.com/v1/cricScore?apikey=${key}`,
+      "liveScores"
+    );
+    res.json(data);
+  } catch (error) {
+    console.error("Error in /api/liveScores:", error.message);
+    res.status(500).json({ status: "error", message: error.message });
+  }
+});
+
 app.get("/api/currentMatches", apiLimiter, async (req, res) => {
   try {
     const data = await fetchWithRotation(
