@@ -1,4 +1,3 @@
-
 // DOM Elements
 const mobileMenuBtn = document.querySelector('.mobile-menu');
 const navLinks = document.querySelector('.nav-links');
@@ -14,6 +13,8 @@ const scheduleBtn = document.getElementById('scheduleBtn');
 const loader = document.getElementById('loader');
 const liveMatchesLastUpdated = document.getElementById('liveMatchesLastUpdated');
 const teamsLastUpdated = document.getElementById('teamsLastUpdated');
+const externalLiveScore = document.getElementById('externalLiveScore');
+const refreshBtn = document.querySelector('.refresh-btn');
 
 // API Configuration
 const API_BASE_URL = 'https://my-node-website.onrender.com';
@@ -76,6 +77,7 @@ function toggleMobileMenu() {
 
 // Theme Toggle
 function toggleTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
   const newTheme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.body.setAttribute('data-theme', newTheme);
   const icon = themeToggle.querySelector('i');
@@ -86,7 +88,7 @@ function toggleTheme() {
 
 // Button event handlers
 function handleStreamButtonClick() {
-window.location.href = '/live/index.html';
+  window.location.href = '/live/index.html';
 }
 
 function handleScheduleButtonClick() {
@@ -236,100 +238,6 @@ async function fetchAndRenderLiveMatches() {
   updateLastUpdated(liveMatchesLastUpdated);
 }
 
-// Add this to your existing script.js
-document.addEventListener('DOMContentLoaded', function() {
-  // Animate footer elements on scroll
-  const footerCols = document.querySelectorAll('.footer-col');
-  
-  const footerObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.animationPlayState = 'running';
-      }
-    });
-  }, { threshold: 0.1 });
-  
-  footerCols.forEach(col => {
-    footerObserver.observe(col);
-  });
-  
-  // Social media icon hover effects
-  const socialIcons = document.querySelectorAll('.social-icon');
-  socialIcons.forEach(icon => {
-    icon.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateY(-5px) rotate(10deg)';
-    });
-    
-    icon.addEventListener('mouseleave', function() {
-      this.style.transform = 'translateY(0) rotate(0deg)';
-    });
-  });
-  
-  // Menu item hover effects
-  const menuItems = document.querySelectorAll('.footer-menu li');
-  menuItems.forEach(item => {
-    item.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateX(5px)';
-    });
-    
-    item.addEventListener('mouseleave', function() {
-      this.style.transform = 'translateX(0)';
-    });
-  });
-});
-  
-  // Animate footer elements on scroll
-  const footerElements = document.querySelectorAll('.footer-col, .footer-title, .footer-menu li');
-  
-  const footerObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('animate-in');
-      }
-    });
-  }, { threshold: 0.1 });
-  
-  footerElements.forEach(el => {
-    footerObserver.observe(el);
-  });
-
-
-function showNewsletterError(message) {
-  const form = document.getElementById('subscribe-form');
-  let errorElement = form.querySelector('.error-message');
-  
-  if (!errorElement) {
-    errorElement = document.createElement('div');
-    errorElement.className = 'error-message';
-    form.appendChild(errorElement);
-  }
-  
-  errorElement.textContent = message;
-  errorElement.style.display = 'block';
-  
-  setTimeout(() => {
-    errorElement.style.display = 'none';
-  }, 3000);
-}
-
-function showNewsletterSuccess(message) {
-  const form = document.getElementById('subscribe-form');
-  let successElement = form.querySelector('.success-message');
-  
-  if (!successElement) {
-    successElement = document.createElement('div');
-    successElement.className = 'success-message';
-    form.appendChild(successElement);
-  }
-  
-  successElement.textContent = message;
-  successElement.style.display = 'block';
-  
-  setTimeout(() => {
-    successElement.style.display = 'none';
-  }, 3000);
-}
-
 // Fetch & render teams
 async function fetchAndRenderTeams() {
   const data = await fetchData(ENDPOINTS.TEAMS);
@@ -444,56 +352,87 @@ async function fetchAndRenderPointsTable() {
   `;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Update copyright year
-  document.getElementById('current-year').textContent = new Date().getFullYear();
-  
-  // Add animation classes
-  const footerSections = document.querySelectorAll('.footer-brand, .footer-section');
-  footerSections.forEach((section, index) => {
-    section.classList.add('animate-footer', `delay-${index}`);
-  });
-  
-  // Interactive checkboxes
-  const checkboxes = document.querySelectorAll('.checkbox');
-  checkboxes.forEach(box => {
-    box.addEventListener('click', () => {
-      box.textContent = box.textContent === '[ ]' ? '[x]' : '[ ]';
-    });
-  });
-  
-  // Smooth scroll to top
-  const topLink = document.querySelector('.top-link');
-  if (topLink) {
-    topLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
+// Fetch external live score
+async function fetchExternalLiveScore() {
+  try {
+    showLoader();
+    const response = await fetch('https://api.cricapi.com/v1/cricScore?apikey=68adc291-7369-43b4-b3a3-b2b4b0b946b6');
+    const data = await response.json();
+    
+    if (data && data.data && data.data.length > 0) {
+      const liveMatch = data.data.find(match => match.status === 'Live') || data.data[0];
+      
+      const team1 = liveMatch.t1 || 'Team 1';
+      const team2 = liveMatch.t2 || 'Team 2';
+      const score1 = liveMatch.t1s || '0/0';
+      const score2 = liveMatch.t2s || '0/0';
+      const status = liveMatch.status || 'Match about to start';
+      
+      externalLiveScore.innerHTML = `
+        <div class="live-score-header">
+          <i class="fas fa-star pulsate"></i>
+          <h3>Live Match Updates</h3>
+          <i class="fas fa-star pulsate"></i>
+        </div>
+        <div class="live-score-content">
+          <div class="live-score-teams">
+            <div class="live-score-team">
+              <div class="team-logo-placeholder">
+                <img src="${TEAM_LOGOS[team1] || 'https://i.imgur.com/mVMNx6m.jpeg'}" alt="${team1}">
+              </div>
+              <span class="team-name">${team1}</span>
+            </div>
+            <div class="live-score-vs">VS</div>
+            <div class="live-score-team">
+              <div class="team-logo-placeholder">
+                <img src="${TEAM_LOGOS[team2] || 'https://i.imgur.com/mVMNx6m.jpeg'}" alt="${team2}">
+              </div>
+              <span class="team-name">${team2}</span>
+            </div>
+          </div>
+          <div class="live-score-details">
+            <div class="score-line">
+              <i class="fas fa-running"></i>
+              <span class="score-text">${team1}: ${score1} | ${team2}: ${score2}</span>
+            </div>
+            <div class="match-status">
+              <span class="status-badge ${liveMatch.status === 'Live' ? 'live' : 'upcoming'}">
+                ${liveMatch.status === 'Live' ? 'LIVE' : 'UPCOMING'}
+              </span>
+              <span class="match-time"><i class="fas fa-clock"></i> ${status}</span>
+            </div>
+          </div>
+        </div>
+        <div class="live-score-footer">
+          <button class="refresh-btn">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+      `;
+      
+      // Add event listener to the new refresh button
+      document.querySelector('.refresh-btn').addEventListener('click', fetchExternalLiveScore);
+    } else {
+      externalLiveScore.innerHTML = `
+        <div class="error-message">
+          <i class="fas fa-exclamation-triangle"></i> No live matches available at the moment.
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Error fetching live score:', error);
+    externalLiveScore.innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i> Failed to load live score. Please try again later.
+      </div>
+    `;
+  } finally {
+    hideLoader();
   }
-  
-  // Add hover effect to logo
-  const logo = document.querySelector('.logo-circle');
-  if (logo) {
-    logo.addEventListener('mouseenter', () => {
-      logo.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
-    });
-    logo.addEventListener('mouseleave', () => {
-      logo.style.boxShadow = 'none';
-    });
-  }
-  
-  // Parallax effect for background
-  window.addEventListener('scroll', () => {
-    const footer = document.querySelector('.minimal-footer');
-    const scrollPosition = window.pageYOffset;
-    footer.style.backgroundPositionY = scrollPosition * 0.5 + 'px';
-  });
-});
+}
 
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize footer animations and interactions
+function initFooter() {
   // Update copyright year
   document.getElementById('current-year').textContent = new Date().getFullYear();
   
@@ -540,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const scrollPosition = window.pageYOffset;
     footer.style.backgroundPositionY = scrollPosition * 0.5 + 'px';
   });
-});
+}
 
 // Init App
 async function init() {
@@ -560,11 +499,16 @@ async function init() {
   if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
   if (streamBtn) streamBtn.addEventListener('click', handleStreamButtonClick);
   if (scheduleBtn) scheduleBtn.addEventListener('click', handleScheduleButtonClick);
+  if (refreshBtn) refreshBtn.addEventListener('click', fetchExternalLiveScore);
 
   await fetchNextMatch();
   await fetchAndRenderLiveMatches();
   await fetchAndRenderTeams();
   await fetchAndRenderPointsTable();
+  await fetchExternalLiveScore();
+  fetchExternalLiveScore(); 
+  
+  initFooter();
 }
 
 document.addEventListener('DOMContentLoaded', init);
