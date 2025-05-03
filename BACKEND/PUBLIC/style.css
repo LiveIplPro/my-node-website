@@ -1,4 +1,5 @@
 
+
 /* Base Styles */
 :root {
     --primary-color: #ff4757;
@@ -1383,289 +1384,232 @@ header {
   }
 }
 
-/* Modern Footer Styles */
-:root {
-  --primary-color: #2c3e50;
-  --secondary-color: #3498db;
-  --accent-color: #e74c3c;
-  --text-color: #333;
-  --light-text: #7f8c8d;
-  --bg-color: #f9f9f9;
-  --card-bg: rgba(255, 255, 255, 0.95);
-  --transition: all 0.3s ease;
-}
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-}
-
+/* Footer Styles */
 .minimal-footer {
-  position: relative;
-  background: var(--bg-color);
-  color: var(--text-color);
-  padding: 60px 20px 30px;
-  overflow: hidden;
+    position: relative;
+    background: #111;
+    color: #fff;
+    padding: 50px 20px 20px;
+    font-family: 'Segoe UI', sans-serif;
+    animation: fadeInUp 1s ease-in;
 }
 
 .footer-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  opacity: 0.9;
-  z-index: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,#1d2530 0%, #000000 100%);
+    opacity: 0.9;
+    z-index: 0;
 }
 
 .footer-content {
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
-  z-index: 1;
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    z-index: 1;
 }
 
 .footer-brand {
-  padding: 20px;
+    padding: 20px;
 }
 
 .logo-container {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .logo-circle {
-  width: 80px;
-  height: 80px;
-  background: var(--primary-color);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  transition: var(--transition);
+    width: 80px;
+    height: 80px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    transition: var(--transition);
 }
 
 .logo-circle:hover {
-  transform: rotate(15deg) scale(1.1);
-  background: var(--accent-color);
+    transform: rotate(15deg) scale(1.1);
+    background: var(--accent-color);
 }
 
 .footer-brand h3 {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 5px;
-  color: var(--primary-color);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: var(--primary-color);
 }
 
 .profession {
-  font-size: 16px;
-  color: var(--light-text);
-  margin-bottom: 20px;
-  position: relative;
-  display: inline-block;
+    font-size: 16px;
+    color: var(--light-text);
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
 }
 
 .profession::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 50px;
-  height: 3px;
-  background: var(--secondary-color);
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--secondary-color);
 }
 
 .footer-description p {
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--light-text);
-  max-width: 300px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--light-text);
+    max-width: 300px;
 }
 
 .footer-sections {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
 }
 
 .footer-section {
-  padding: 20px;
+    padding: 20px;
 }
 
 .section-title {
-  font-size: 18px;
-  margin-bottom: 20px;
-  letter-spacing: 0.5px;
-  color: var(--primary-color);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    font-size: 18px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .checkbox {
-  font-family: monospace;
-  font-size: 16px;
-  cursor: pointer;
-  transition: var(--transition);
+    font-family: monospace;
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
 .checkbox:hover {
-  color: var(--accent-color);
+    color: var(--accent-color);
 }
 
 .footer-links {
-  list-style: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .footer-links li {
-  margin-bottom: 12px;
+    margin-bottom: 12px;
 }
 
 .footer-links a {
-  text-decoration: none;
-  color: var(--text-color);
-  font-size: 15px;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    text-decoration: none;
+    color: #ccc;
+    font-size: 15px;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
 }
 
 .footer-links a:hover {
-  color: var(--secondary-color);
-  transform: translateX(5px);
+    color: var(--secondary-color);
+    transform: translateX(5px);
 }
 
 .icon {
-  width: 20px;
-  text-align: center;
-  color: var(--secondary-color);
+    width: 20px;
+    text-align: center;
+    color: var(--secondary-color);
 }
 
 address {
-  font-style: normal;
-  line-height: 1.6;
-  color: var(--light-text);
-  margin-bottom: 25px;
+    font-style: normal;
+    line-height: 1.6;
+    color: var(--light-text);
+    margin-bottom: 25px;
 }
 
 address i {
-  margin-right: 8px;
-  color: var(--secondary-color);
+    margin-right: 8px;
+    color: var(--secondary-color);
 }
 
 .footer-social {
-  display: flex;
-  gap: 15px;
+    display: flex;
+    gap: 15px;
 }
 
 .social-icon {
-  width: 36px;
-  height: 36px;
-  background: white;
-  color:gold (--primary-color);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: var(--transition);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 36px;
+    height: 36px;
+    background: white;
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: var(--transition);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .social-icon:hover {
-  background: var(--secondary-color);
-  color: white;
-  transform: translateY(-3px);
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-3px);
 }
 
 .footer-bottom {
-  position: relative;
-  text-align: center;
-  padding-top: 30px;
-  margin-top: 40px;
-  border-top: 1px solid rgba(0,0,0,0.1);
-  font-size: 14px;
-  color: var(--light-text);
-  z-index: 1;
+    position: relative;
+    text-align: center;
+    padding-top: 30px;
+    margin-top: 40px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    font-size: 14px;
+    color: var(--light-text);
+    z-index: 1;
 }
 
 .back-to-top {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
 }
 
 .top-link {
-  width: 40px;
-  height: 40px;
-  background: var(--secondary-color);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: var(--transition);
+    width: 40px;
+    height: 40px;
+    background: var(--secondary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: var(--transition);
 }
 
 .top-link:hover {
-  background: var(--accent-color);
-  transform: translateY(-5px);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .footer-sections {
-    grid-template-columns: 1fr;
-  }
-  
-  .footer-brand {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .footer-description p {
-    max-width: 100%;
-    text-align: center;
-  }
-  
-  .footer-section {
-    text-align: center;
-  }
-  
-  .footer-links a {
-    justify-content: center;
-  }
-  
-  .footer-social {
-    justify-content: center;
-  }
-  
-  .back-to-top {
-    position: static;
-    margin-top: 20px;
-  }
+    background: var(--accent-color);
+    transform: translateY(-5px);
 }
 
 /* Animation Classes */
@@ -1748,4 +1692,224 @@ address i {
   100% {
     transform: translateY(-30px) scale(1.1);
   }
+}
+/* Live Score Container - New Style */
+.live-score-container {
+    position: relative;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.live-score-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.live-score-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px;
+    background: linear-gradient(90deg, rgba(255,71,87,0.3), rgba(30,144,255,0.3));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.live-score-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pulsate {
+    animation: pulsate 2s infinite;
+    color: #ffcc00;
+}
+
+@keyframes pulsate {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.live-score-content {
+    padding: 20px;
+}
+
+.live-score-teams {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.live-score-team {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.team-logo-placeholder {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.team-logo-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.live-score-team:hover .team-logo-placeholder {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.team-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.live-score-vs {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.live-score-details {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.score-line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.score-line i {
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+.score-text {
+    flex: 1;
+}
+
+.match-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-badge.live {
+    background: #ff4757;
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+.match-time {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.match-time i {
+    margin-right: 5px;
+}
+
+.live-score-footer {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.refresh-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.refresh-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.refresh-btn i {
+    transition: transform 0.5s ease;
+}
+
+.refresh-btn:hover i {
+    transform: rotate(360deg);
+}
+/* Add this to your existing style.css */
+.last-updated {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-left: 15px;
+}
+
+.live-score-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.error-message {
+  padding: 20px;
+  text-align: center;
+  color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+  border-radius: 8px;
+  margin: 15px;
+}
+
+.error-message i {
+  margin-right: 8px;
 }
