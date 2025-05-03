@@ -34,6 +34,14 @@ const apiLimiter = rateLimit({
   message: "Too many requests, please try again later."
 });
 
+// IPL Teams List
+const IPL_TEAMS = [
+  "Chennai Super Kings", "Delhi Capitals", "Gujarat Titans",
+  "Kolkata Knight Riders", "Lucknow Super Giants", "Mumbai Indians",
+  "Punjab Kings", "Rajasthan Royals", "Royal Challengers Bengaluru",
+  "Sunrisers Hyderabad"
+];
+
 // Teams API
 app.get('/api/teams', (req, res) => {
   const teamsData = [
@@ -209,7 +217,8 @@ app.get("/api/currentMatches", apiLimiter, async (req, res) => {
     // Filter only IPL matches from API
     const iplMatchesFromApi = apiMatches.filter(match => 
       match.matchType === "ipl" || match.matchType === "IPL" || 
-      (match.name && match.name.includes("IPL"))
+      (match.name && match.name.includes("IPL")) ||
+      (IPL_TEAMS.includes(match.t1) || IPL_TEAMS.includes(match.t2))
     );
 
     // Combine with our upcoming IPL matches
@@ -307,14 +316,39 @@ async function fetchWithRotation(urlGenerator, cacheTag) {
   throw new Error("All API keys failed or exhausted.");
 }
 
-// API Routes
+// Updated Live Scores API - Only shows IPL matches and recent completed matches
 app.get("/api/liveScores", apiLimiter, async (req, res) => {
   try {
     const data = await fetchWithRotation(
       (key) => `https://api.cricapi.com/v1/cricScore?apikey=${key}`,
       "liveScores"
     );
-    res.json(data);
+
+    if (!data || !data.data) {
+      return res.json({ status: "success", data: [] });
+    }
+
+    // Filter matches to include only IPL team matches
+    const iplMatches = data.data.filter(match => {
+      return IPL_TEAMS.includes(match.t1) || IPL_TEAMS.includes(match.t2);
+    });
+
+    // If no live matches, find the most recent completed match
+    if (iplMatches.length === 0) {
+      const completedMatches = data.data
+        .filter(match => match.status === "Completed" && 
+               (IPL_TEAMS.includes(match.t1) || IPL_TEAMS.includes(match.t2)))
+        .sort((a, b) => new Date(b.dateTimeGMT) - new Date(a.dateTimeGMT));
+
+      if (completedMatches.length > 0) {
+        return res.json({ 
+          status: "success", 
+          data: [completedMatches[0]] 
+        });
+      }
+    }
+
+    res.json({ status: "success", data: iplMatches });
   } catch (error) {
     console.error("Error in /api/liveScores:", error.message);
     res.status(500).json({ status: "error", message: error.message });
