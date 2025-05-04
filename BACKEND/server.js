@@ -328,27 +328,23 @@ app.get("/api/liveScores", apiLimiter, async (req, res) => {
       return res.json({ status: "success", data: [] });
     }
 
-    // Filter matches to include only IPL team matches
-    const iplMatches = data.data.filter(match => {
-      return IPL_TEAMS.includes(match.t1) || IPL_TEAMS.includes(match.t2);
-    });
+    // Filter matches to include only IPL 2025 matches
+    const ipl2025Matches = data.data.filter(match => 
+      match.series === "Indian Premier League 2025"
+    );
 
     // If no live matches, find the most recent completed match
-    if (iplMatches.length === 0) {
-      const completedMatches = data.data
-        .filter(match => match.status === "Completed" && 
-               (IPL_TEAMS.includes(match.t1) || IPL_TEAMS.includes(match.t2)))
-        .sort((a, b) => new Date(b.dateTimeGMT) - new Date(a.dateTimeGMT));
-
-      if (completedMatches.length > 0) {
-        return res.json({ 
-          status: "success", 
-          data: [completedMatches[0]] 
-        });
-      }
+    if (ipl2025Matches.length === 0) {
+      return res.json({ status: "success", data: [] });
     }
 
-    res.json({ status: "success", data: iplMatches });
+    // Sort by date (newest first)
+    ipl2025Matches.sort((a, b) => new Date(b.dateTimeGMT) - new Date(a.dateTimeGMT));
+
+    res.json({ 
+      status: "success", 
+      data: ipl2025Matches 
+    });
   } catch (error) {
     console.error("Error in /api/liveScores:", error.message);
     res.status(500).json({ status: "error", message: error.message });
