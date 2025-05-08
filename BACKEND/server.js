@@ -53,6 +53,8 @@ app.get('/api/teams', (req, res) => {
       matches: 210,
       wins: 130,
       losses: 80,
+      homeGround: "M. A. Chidambaram Stadium, Chennai",
+      founded: "2008",
       description: "Chennai Super Kings is one of the most consistent and successful teams in IPL history."
     },
     {
@@ -63,6 +65,8 @@ app.get('/api/teams', (req, res) => {
       matches: 216,
       wins: 102,
       losses: 114,
+      homeGround: "Arun Jaitley Stadium, Delhi",
+      founded: "2008",
       description: "Delhi Capitals has transformed into a competitive unit with a young and fearless core."
     },
     {
@@ -73,6 +77,8 @@ app.get('/api/teams', (req, res) => {
       matches: 32,
       wins: 22,
       losses: 10,
+      homeGround: "Narendra Modi Stadium, Ahmedabad",
+      founded: "2022",
       description: "Gujarat Titans made a dream debut in 2022 by winning the title and remain strong contenders."
     },
     {
@@ -83,6 +89,8 @@ app.get('/api/teams', (req, res) => {
       matches: 224,
       wins: 115,
       losses: 109,
+      homeGround: "Eden Gardens, Kolkata",
+      founded: "2008",
       description: "KKR has a rich history with two titles and strong performances under pressure."
     },
     {
@@ -93,6 +101,8 @@ app.get('/api/teams', (req, res) => {
       matches: 30,
       wins: 18,
       losses: 12,
+      homeGround: "BRSABV Ekana Cricket Stadium, Lucknow",
+      founded: "2022",
       description: "Lucknow Super Giants have impressed with their balanced squad and consistent playoff runs."
     },
     {
@@ -103,6 +113,8 @@ app.get('/api/teams', (req, res) => {
       matches: 231,
       wins: 129,
       losses: 98,
+      homeGround: "Wankhede Stadium, Mumbai",
+      founded: "2008",
       description: "Mumbai Indians has a legacy of dominance and is the most successful team in IPL history."
     },
     {
@@ -113,6 +125,8 @@ app.get('/api/teams', (req, res) => {
       matches: 218,
       wins: 98,
       losses: 120,
+      homeGround: "IS Bindra Stadium, Mohali",
+      founded: "2008",
       description: "Punjab Kings have a strong squad but are still chasing their first IPL title."
     },
     {
@@ -123,6 +137,8 @@ app.get('/api/teams', (req, res) => {
       matches: 194,
       wins: 98,
       losses: 96,
+      homeGround: "Sawai Mansingh Stadium, Jaipur",
+      founded: "2008",
       description: "Winners of the inaugural IPL, RR is known for nurturing young talent and competitive spirit."
     },
     {
@@ -133,6 +149,8 @@ app.get('/api/teams', (req, res) => {
       matches: 227,
       wins: 107,
       losses: 120,
+      homeGround: "M. Chinnaswamy Stadium, Bengaluru",
+      founded: "2008",
       description: "RCB is known for its passionate fan base and high-profile players, always strong contenders."
     },
     {
@@ -143,11 +161,62 @@ app.get('/api/teams', (req, res) => {
       matches: 177,
       wins: 90,
       losses: 87,
+      homeGround: "Rajiv Gandhi International Cricket Stadium, Hyderabad",
+      founded: "2013",
       description: "Sunrisers Hyderabad won the IPL in 2016 and are known for their strong bowling attack."
     }
   ];
 
   res.json(teamsData);
+});
+
+// Players API
+app.get('/api/playersList', (req, res) => {
+  const playersData = [
+    {
+      id: "player1",
+      name: "Virat Kohli",
+      team: "Royal Challengers Bengaluru",
+      role: "Batsman",
+      age: 35,
+      country: "India",
+      battingStyle: "Right-handed",
+      bowlingStyle: "Right-arm medium",
+      matches: 237,
+      runs: 7263,
+      battingAvg: 37.25,
+      highestScore: 113,
+      fifties: 50,
+      centuries: 7,
+      wickets: 4,
+      bowlingAvg: 130.25,
+      bestBowling: "1/7",
+      image: "https://i.imgur.com/xyz1234.jpeg"
+    },
+    {
+      id: "player2",
+      name: "Jasprit Bumrah",
+      team: "Mumbai Indians",
+      role: "Bowler",
+      age: 30,
+      country: "India",
+      battingStyle: "Right-handed",
+      bowlingStyle: "Right-arm fast",
+      matches: 120,
+      runs: 189,
+      battingAvg: 7.56,
+      highestScore: 23,
+      fifties: 0,
+      centuries: 0,
+      wickets: 145,
+      bowlingAvg: 23.31,
+      bestBowling: "5/10",
+      image: "https://i.imgur.com/abcd5678.jpeg"
+    },
+    // Add more players as needed
+  ];
+
+  res.json(playersData);
 });
 
 // Upcoming IPL matches data
@@ -328,68 +397,213 @@ app.get("/api/liveScores", apiLimiter, async (req, res) => {
       return res.json({ status: "success", data: [] });
     }
 
-    // Filter matches to include only IPL 2025 matches
-    const ipl2025Matches = data.data.filter(match => 
-      match.series === "Indian Premier League 2025"
-    );
+    // Filter matches to include only IPL team matches
+    const iplMatches = data.data.filter(match => {
+      return IPL_TEAMS.includes(match.t1) || IPL_TEAMS.includes(match.t2);
+    });
 
     // If no live matches, find the most recent completed match
-    if (ipl2025Matches.length === 0) {
-      return res.json({ status: "success", data: [] });
+    if (iplMatches.length === 0) {
+      const completedMatches = data.data
+        .filter(match => match.status === "Completed" && 
+               (IPL_TEAMS.includes(match.t1) || IPL_TEAMS.includes(match.t2)))
+        .sort((a, b) => new Date(b.dateTimeGMT) - new Date(a.dateTimeGMT));
+
+      if (completedMatches.length > 0) {
+        return res.json({ 
+          status: "success", 
+          data: [completedMatches[0]] 
+        });
+      }
     }
 
-    // Sort by date (newest first)
-    ipl2025Matches.sort((a, b) => new Date(b.dateTimeGMT) - new Date(a.dateTimeGMT));
-
-    res.json({ 
-      status: "success", 
-      data: ipl2025Matches 
-    });
+    res.json({ status: "success", data: iplMatches });
   } catch (error) {
     console.error("Error in /api/liveScores:", error.message);
     res.status(500).json({ status: "error", message: error.message });
   }
 });
 
-app.get("/api/matchStats/:matchId", apiLimiter, async (req, res) => {
+// Match Info API
+app.get("/api/matchInfo/:matchId", apiLimiter, async (req, res) => {
   try {
     const { matchId } = req.params;
-    const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/match_info?apikey=${key}&id=${matchId}`,
-      `matchStats_${matchId}`
-    );
-    res.json(data);
+    
+    // First try to get from external API
+    try {
+      const data = await fetchWithRotation(
+        (key) => `https://api.cricapi.com/v1/match_info?apikey=${key}&id=${matchId}`,
+        `matchInfo_${matchId}`
+      );
+      
+      if (data && data.data) {
+        return res.json(data);
+      }
+    } catch (error) {
+      console.log("Falling back to local match data:", error.message);
+    }
+    
+    // Fallback to our local data if API fails
+    const match = upcomingIPLMatches.find(m => m.id === matchId);
+    if (match) {
+      return res.json({
+        status: "success",
+        data: {
+          ...match,
+          tossWinner: match.teams[Math.floor(Math.random() * 2)],
+          tossDecision: Math.random() > 0.5 ? "Batting" : "Fielding",
+          result: "Match yet to begin",
+          playerOfMatch: null,
+          teams: match.teams.map(team => ({
+            name: team,
+            players: Array(11).fill().map((_, i) => `Player ${i+1}`)
+          }))
+        }
+      });
+    }
+    
+    res.status(404).json({ status: "error", message: "Match not found" });
   } catch (error) {
-    console.error(`Error in /api/matchStats/${req.params.matchId}:`, error.message);
+    console.error(`Error in /api/matchInfo/${req.params.matchId}:`, error.message);
     res.status(500).json({ status: "error", message: error.message });
   }
 });
 
-app.get("/api/playerStats/:playerId", apiLimiter, async (req, res) => {
+// Player Info API
+app.get("/api/playerInfo/:playerId", apiLimiter, async (req, res) => {
   try {
     const { playerId } = req.params;
-    const data = await fetchWithRotation(
-      (key) => `https://api.cricapi.com/v1/players_info?apikey=${key}&id=${playerId}`,
-      `playerStats_${playerId}`
-    );
-    res.json(data);
+    
+    // First try to get from external API
+    try {
+      const data = await fetchWithRotation(
+        (key) => `https://api.cricapi.com/v1/players_info?apikey=${key}&id=${playerId}`,
+        `playerInfo_${playerId}`
+      );
+      
+      if (data && data.data) {
+        return res.json(data);
+      }
+    } catch (error) {
+      console.log("Falling back to local player data:", error.message);
+    }
+    
+    // Fallback to our local data if API fails
+    res.json({
+      status: "success",
+      data: {
+        id: playerId,
+        name: "Sample Player",
+        team: "Sample Team",
+        role: "Batsman",
+        age: 28,
+        country: "India",
+        battingStyle: "Right-handed",
+        bowlingStyle: "Right-arm medium",
+        matches: 100,
+        runs: 2500,
+        battingAvg: 35.71,
+        highestScore: 120,
+        fifties: 15,
+        centuries: 2,
+        wickets: 5,
+        bowlingAvg: 45.00,
+        bestBowling: "1/15",
+        image: "https://i.imgur.com/mVMNx6m.jpeg"
+      }
+    });
   } catch (error) {
-    console.error(`Error in /api/playerStats/${req.params.playerId}:`, error.message);
+    console.error(`Error in /api/playerInfo/${req.params.playerId}:`, error.message);
     res.status(500).json({ status: "error", message: error.message });
   }
 });
 
-// Match prediction dummy endpoint
-app.post("/api/predict", apiLimiter, async (req, res) => {
-  try {
-    const { team1, team2 } = req.body;
-    const prediction = Math.random() > 0.5 ? team1 : team2;
-    const confidence = Math.random().toFixed(2);
-    res.json({ prediction, confidence });
-  } catch (error) {
-    console.error("Error in /api/predict:", error.message);
-    res.status(500).json({ status: "error", message: error.message });
-  }
+// Points Table API
+app.get("/api/pointsTable", (req, res) => {
+  const pointsTable = [
+    {
+      name: "Gujarat Titans",
+      played: 14,
+      won: 10,
+      lost: 4,
+      nrr: "+0.809",
+      points: 20
+    },
+    {
+      name: "Chennai Super Kings",
+      played: 14,
+      won: 9,
+      lost: 5,
+      nrr: "+0.652",
+      points: 18
+    },
+    {
+      name: "Mumbai Indians",
+      played: 14,
+      won: 9,
+      lost: 5,
+      nrr: "+0.501",
+      points: 18
+    },
+    {
+      name: "Royal Challengers Bengaluru",
+      played: 14,
+      won: 8,
+      lost: 6,
+      nrr: "+0.180",
+      points: 16
+    },
+    {
+      name: "Lucknow Super Giants",
+      played: 14,
+      won: 8,
+      lost: 6,
+      nrr: "+0.123",
+      points: 16
+    },
+    {
+      name: "Rajasthan Royals",
+      played: 14,
+      won: 7,
+      lost: 7,
+      nrr: "+0.148",
+      points: 14
+    },
+    {
+      name: "Kolkata Knight Riders",
+      played: 14,
+      won: 6,
+      lost: 8,
+      nrr: "-0.239",
+      points: 12
+    },
+    {
+      name: "Punjab Kings",
+      played: 14,
+      won: 6,
+      lost: 8,
+      nrr: "-0.304",
+      points: 12
+    },
+    {
+      name: "Delhi Capitals",
+      played: 14,
+      won: 5,
+      lost: 9,
+      nrr: "-0.808",
+      points: 10
+    },
+    {
+      name: "Sunrisers Hyderabad",
+      played: 14,
+      won: 4,
+      lost: 10,
+      nrr: "-0.590",
+      points: 8
+    }
+  ];
+
+  res.json(pointsTable);
 });
 
 // Health Check
